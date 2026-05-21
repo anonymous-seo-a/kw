@@ -1,0 +1,51 @@
+{
+  "name": "silo-coverage-designer",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "tsx watch src/api/server.ts",
+    "ui:dev": "vite",
+    "build": "vite build",
+    "start:prod": "NODE_ENV=production tsx src/api/server.ts",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "db:migrate": "tsx scripts/db-migrate.ts",
+    "db:reset": "tsx scripts/db-reset.ts",
+    "verify:env": "tsx scripts/verify-env.ts",
+    "verify:db": "tsx scripts/verify-db.ts",
+    "verify:apis": "tsx scripts/verify-apis.ts",
+    "l1:run": "tsx src/cli/l1-run.ts",
+    "l1:fanout": "tsx src/cli/l1-fanout.ts",
+    "l1:gsc": "tsx src/cli/l1-gsc.ts",
+    "l1:serp": "tsx src/cli/l1-serp.ts",
+    "l1:nlp": "tsx src/cli/l1-nlp.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.0",
+    "@google-cloud/language": "^6.5.0",
+    "better-sqlite3": "^11.5.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "googleapis": "^144.0.0",
+    "pino": "^9.5.0",
+    "pino-pretty": "^11.2.2",
+    "undici": "^6.21.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@types/better-sqlite3": "^7.6.11",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.7.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0",
+    "vite": "^5.4.0",
+    "vitest": "^2.1.0"
+  }
+}

@@ -1,0 +1,38 @@
+# Secrets / env
+.env
+.env.*
+!.env.example
+**/.secrets/
+*.pem
+*.key
+
+# Dependencies / build artifacts
+node_modules/
+dist/
+coverage/
+.cache/
+.vite/
+.turbo/
+
+# SQLite DBs (data, not source)
+*.sqlite
+*.sqlite-*
+*.db
+*.db-shm
+*.db-wal
+
+# Logs
+logs/
+*.log
+pm2.log
+npm-debug.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Test artifacts
+*.tsbuildinfo
+.nyc_output/

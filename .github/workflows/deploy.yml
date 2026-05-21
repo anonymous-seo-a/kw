@@ -1,0 +1,46 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-vps-kw
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VPS_SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "${{ secrets.VPS_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Deploy
+        run: |
+          ssh -i ~/.ssh/deploy_key root@${{ secrets.VPS_HOST }} 'bash -s' <<'REMOTE'
+          set -euo pipefail
+          REPO=/opt/kw
+          if [ ! -d "$REPO/.git" ]; then
+            git clone --depth=1 https://github.com/anonymous-seo-a/kw.git "$REPO"
+          fi
+          cd "$REPO"
+          git fetch --depth=1 origin main
+          git checkout main
+          git reset --hard origin/main
+          npm ci --no-audit --no-fund
+          npm run db:migrate
+          # UI (Phase 7 で本実装される。それまでは placeholder)
+          if [ -d src/ui ]; then npm run build || true; fi
+          if pm2 describe kw-app >/dev/null 2>&1; then
+            pm2 restart kw-app --update-env
+          else
+            pm2 start "npm run start:prod" --name kw-app
+          fi
+          pm2 save
+          echo "deployed: $(git rev-parse --short HEAD)"
+          REMOTE
