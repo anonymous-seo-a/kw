@@ -5,6 +5,7 @@ import { GraphTab } from './tabs/GraphTab.js';
 import { ComplianceTab } from './tabs/ComplianceTab.js';
 import { TrueBeautyTab } from './tabs/TrueBeautyTab.js';
 import { PagesTab } from './tabs/PagesTab.js';
+import { OutputTab } from './tabs/OutputTab.js';
 
 interface Run {
   run_id: string;
@@ -24,9 +25,10 @@ interface Counts {
   uncovered: number;
 }
 
-type Tab = 'diff' | 'pages' | 'topical' | 'graph' | 'compliance' | 'truebeauty';
+type Tab = 'output' | 'diff' | 'pages' | 'topical' | 'graph' | 'compliance' | 'truebeauty';
 
 const TAB_LABELS: Record<Tab, string> = {
+  output: '出力 (軸KW→配下KW)',
   diff: 'DIFF表',
   pages: 'ページ別KW',
   topical: 'topical map',
@@ -39,7 +41,7 @@ export function App() {
   const [runs, setRuns] = useState<Run[]>([]);
   const [runId, setRunId] = useState<string>('');
   const [counts, setCounts] = useState<Counts | null>(null);
-  const [tab, setTab] = useState<Tab>('pages');
+  const [tab, setTab] = useState<Tab>('output');
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -119,6 +121,8 @@ export function App() {
         {error && <div className="error">{error}</div>}
         {!runId ? (
           <div className="loading">runを選択してください</div>
+        ) : tab === 'output' ? (
+          <OutputTab runId={runId} />
         ) : tab === 'diff' ? (
           <DiffTab runId={runId} />
         ) : tab === 'pages' ? (

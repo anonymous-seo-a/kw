@@ -10,6 +10,7 @@
  */
 import { Router } from 'express';
 import { kwDb } from '../../lib/db.js';
+import { buildPageMembersCsv, groupByPage } from '../../export/csv.js';
 
 export const dashboardRouter = Router();
 
@@ -214,6 +215,24 @@ dashboardRouter.get('/:runId/truebeauty', (req, res) => {
       rationale: r.rationale,
     })),
   });
+});
+
+// CSV出力 (軸KW → 配下記事KW)
+dashboardRouter.get('/:runId/csv', (req, res) => {
+  const { csv, rowCount } = buildPageMembersCsv(req.params.runId);
+  res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+  res.setHeader(
+    'Content-Disposition',
+    `attachment; filename="kw-${req.params.runId}-pages.csv"`,
+  );
+  res.setHeader('X-Row-Count', String(rowCount));
+  res.send(csv);
+});
+
+// 階層view: page単位の配下記事KW (UIで「軸KW → 配下記事KW」一覧)
+dashboardRouter.get('/:runId/page-members', (req, res) => {
+  const groups = groupByPage(req.params.runId);
+  res.json({ groups, pageCount: groups.length });
 });
 
 dashboardRouter.get('/:runId/page/:pageId', (req, res) => {
