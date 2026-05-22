@@ -1,0 +1,119 @@
+{
+  "$comment": "Compliance floor seed data for vertical=medical (AGA-class YMYL). Phase 4 で master_completeness_checklist へ展開する。一次資料URL確認済（2026-05-21 時点）。",
+  "scope": "compliance_floor",
+  "vertical": "medical",
+  "items": [
+    {
+      "id": "medical_ad_guideline",
+      "title": "医療広告ガイドライン",
+      "issuer": "厚生労働省",
+      "law_or_doc_name": "医業若しくは歯科医業又は病院若しくは診療所に関する広告等に関する指針（医療広告ガイドライン）",
+      "article": "医療法第6条の5・第6条の7／ガイドライン本文 第3「禁止される広告」（虚偽・比較優良・誇大・公序良俗違反・体験談・ビフォーアフター・品位を損ねる広告・他法令違反）",
+      "url": "https://www.mhlw.go.jp/content/001683594.pdf",
+      "last_revised": "2025-03",
+      "related_urls": [
+        "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/kokokukisei/index.html",
+        "https://www.mhlw.go.jp/content/001683595.pdf",
+        "https://www.mhlw.go.jp/content/001439423.pdf"
+      ],
+      "verification_needed": false,
+      "notes": "本体PDF＋Q&A＋ウェブサイト等事例解説書（第6版）。8広告禁止事項のうち体験談・ビフォーアフター制限はAGA含む自由診療で頻出。"
+    },
+    {
+      "id": "stealth_marketing_regulation",
+      "title": "ステルスマーケティング規制",
+      "issuer": "消費者庁",
+      "law_or_doc_name": "一般消費者が事業者の表示であることを判別することが困難である表示（令和5年内閣府告示第19号）",
+      "article": "景品表示法 第5条第3号 に基づく指定告示",
+      "url": "https://www.caa.go.jp/policies/policy/representation/fair_labeling/public_notice/assets/representation_cms216_230328_07.pdf",
+      "last_revised": "2023-03",
+      "related_urls": [
+        "https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing",
+        "https://www.caa.go.jp/policies/policy/representation/fair_labeling/guideline/assets/representation_cms216_230328_03.pdf",
+        "https://www.caa.go.jp/policies/policy/representation/fair_labeling/faq/stealth_marketing/"
+      ],
+      "verification_needed": false,
+      "notes": "2023-03-28告示、2023-10-01施行。インフルエンサー施策・口コミ・PR表記に直撃。"
+    },
+    {
+      "id": "premiums_and_representations_act",
+      "title": "景品表示法（優良誤認・有利誤認）",
+      "issuer": "消費者庁",
+      "law_or_doc_name": "不当景品類及び不当表示防止法（昭和37年法律第134号）",
+      "article": "第5条第1号（優良誤認）／第5条第2号（有利誤認）",
+      "url": "https://laws.e-gov.go.jp/law/337AC0000000134",
+      "last_revised": "2024-10",
+      "related_urls": [
+        "https://www.caa.go.jp/policies/policy/representation/fair_labeling/representation_regulation/misleading_representation/",
+        "https://www.caa.go.jp/policies/policy/representation/fair_labeling/representation_regulation/advantageous_misidentification"
+      ],
+      "verification_needed": false,
+      "notes": "2023年改正法（確約手続・課徴金強化）が2024-10-01施行済。AGA広告では発毛効果誇張＝優良誤認、価格訴求の誤認＝有利誤認が典型。"
+    },
+    {
+      "id": "total_price_display",
+      "title": "総額表示義務",
+      "issuer": "国税庁／財務省",
+      "law_or_doc_name": "消費税法（昭和63年法律第108号）",
+      "article": "第63条",
+      "url": "https://laws.e-gov.go.jp/law/363AC0000000108",
+      "last_revised": "2021-04",
+      "related_urls": [
+        "https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6902.htm",
+        "https://www.nta.go.jp/law/tsutatsu/kihon/shohi/18/01.htm",
+        "https://www.nta.go.jp/publication/pamph/shohi/kaisei/pdf/sogakuhyojigimu.pdf"
+      ],
+      "verification_needed": false,
+      "notes": "事業者が消費者向けに価格を表示する場合は消費税込総額表示が義務（2021-04経過措置終了）。クリニック料金表示で必須。"
+    },
+    {
+      "id": "aga_clinical_guideline",
+      "title": "男性型および女性型脱毛症診療ガイドライン",
+      "issuer": "公益社団法人 日本皮膚科学会",
+      "law_or_doc_name": "男性型および女性型脱毛症診療ガイドライン 2017年版",
+      "article": "—（学会ガイドライン、条文なし）",
+      "url": "https://www.dermatol.or.jp/uploads/uploads/files/AGA_GL2017.pdf",
+      "last_revised": "2017-12",
+      "related_urls": [
+        "https://www.dermatol.or.jp/medical/guideline/4742/",
+        "https://minds.jcqhc.or.jp/n/med/4/med0357/G0001064"
+      ],
+      "verification_needed": false,
+      "notes": "2026-05時点で2017年版が現行。フィナステリド・デュタステリド・ミノキシジル外用等を推奨度A〜Dで評価。E-E-A-T根拠の権威ソース。"
+    },
+    {
+      "id": "drug_safety_information",
+      "title": "副作用・リスク情報（医薬品安全性情報）",
+      "issuer": "厚生労働省／PMDA",
+      "law_or_doc_name": "医薬品・医療機器等安全性情報／PMDA安全性情報",
+      "article": "薬機法 第68条の10（副作用等報告）／第68条の2の5（安全性情報提供）",
+      "url": "https://www.pmda.go.jp/safety/info-services/drugs/0001.html",
+      "last_revised": "2026-05",
+      "related_urls": [
+        "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/newpage_54231.html",
+        "https://www.pmda.go.jp/safety/info-services/drugs/calling-attention/0001.html",
+        "https://www.pmda.go.jp/safety/0001.html",
+        "https://www.pmda.go.jp/safety/info-services/medical-safety-info/0001.html"
+      ],
+      "verification_needed": false,
+      "notes": "厚労省月刊『医薬品・医療機器等安全性情報』とPMDA注意喚起・イエロー/ブルーレターが一次資料。フィナス/デュタス等の副作用は添付文書（PMDA検索）参照。"
+    },
+    {
+      "id": "pmd_act_advertising",
+      "title": "薬機法 広告規制",
+      "issuer": "厚生労働省",
+      "law_or_doc_name": "医薬品、医療機器等の品質、有効性及び安全性の確保等に関する法律（昭和35年法律第145号）",
+      "article": "第66条（誇大広告等の禁止）／第68条（承認前の医薬品・医療機器・再生医療等製品の広告禁止）",
+      "url": "https://laws.e-gov.go.jp/law/335AC0000000145",
+      "last_revised": "2024-04",
+      "related_urls": [
+        "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iyakuhin/koukokukisei/index.html",
+        "https://www.mhlw.go.jp/file/05-Shingikai-10801000-Iseikyoku-Soumuka/0000059731.pdf",
+        "https://www.pmda.go.jp/PmdaSearch/iyakuSearch/",
+        "https://www.mhlw.go.jp/content/10601000/001147577.pdf"
+      ],
+      "verification_needed": false,
+      "notes": "第66条＝虚偽・誇大・医師等保証広告の禁止。第68条＝未承認医薬品（個人輸入品・海外製ミノキシジル製剤等）の広告禁止。PMDA医療用医薬品情報検索が効能の公式根拠。医薬品等適正広告基準（薬生発0929第4号）も参照。"
+    }
+  ]
+}
