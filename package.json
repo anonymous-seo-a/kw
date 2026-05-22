@@ -27,6 +27,7 @@
     "l1:nlp": "tsx src/cli/l1-nlp.ts",
     "l2:run": "tsx src/cli/l2-run.ts",
     "phase3:calibrate": "tsx src/cli/phase3-calibrate.ts",
+    "phase3:run": "tsx src/cli/phase3-run.ts",
     "config:set": "tsx src/cli/config-set.ts"
   },
   "dependencies": {
