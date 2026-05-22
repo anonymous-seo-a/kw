@@ -9,7 +9,7 @@
 # Dependencies / build artifacts
 node_modules/
 dist/
-coverage/
+/coverage/
 .cache/
 .vite/
 .turbo/
