@@ -13,6 +13,7 @@ interface Group {
   page_id: string;
   axis_kw: string;
   bucket: string;
+  parent_location: string;
   intent_layer: string;
   pagerank: number | null;
   page_cover_size: number;
@@ -39,7 +40,7 @@ export function OutputTab({ runId }: { runId: string }) {
   }, [runId]);
 
   const filtered = useMemo(() => {
-    return groups.filter((g) => {
+    const base = groups.filter((g) => {
       if (!showUnassigned && g.page_id === '(unassigned)') return false;
       if (!q) return true;
       const ql = q.toLowerCase();
@@ -52,6 +53,23 @@ export function OutputTab({ runId }: { runId: string }) {
       }
       return false;
     });
+    // 並び: 非locationを最初(PR順保持) → locationを parent_location ごとに集約
+    const nonLoc = base.filter((g) => !g.bucket.startsWith('location:'));
+    const loc = base.filter((g) => g.bucket.startsWith('location:'));
+    loc.sort((a, b) => {
+      // top自身が最先頭, sub は親の下に
+      const pa = a.parent_location || a.axis_kw;
+      const pb = b.parent_location || b.axis_kw;
+      if (pa !== pb) return pa.localeCompare(pb, 'ja');
+      // 同parent内: top (parent==自身bucket value) → 先頭、その後cover desc
+      const aBucketVal = a.bucket.replace('location:', '');
+      const bBucketVal = b.bucket.replace('location:', '');
+      const aIsTop = a.parent_location === aBucketVal || !a.parent_location;
+      const bIsTop = b.parent_location === bBucketVal || !b.parent_location;
+      if (aIsTop !== bIsTop) return aIsTop ? -1 : 1;
+      return b.page_cover_size - a.page_cover_size;
+    });
+    return [...nonLoc, ...loc];
   }, [groups, q, showUnassigned]);
 
   const totals = useMemo(() => {
@@ -130,7 +148,13 @@ export function OutputTab({ runId }: { runId: string }) {
               <div style={pageHeader} onClick={() => toggle(g.page_id)}>
                 <span style={{ width: 18, fontSize: 14 }}>{isExpanded ? '▼' : '▶'}</span>
                 <span style={{ fontSize: 14, fontWeight: 600 }}>
-                  【{g.bucket || '—'}】 {g.axis_kw}
+                  【{g.bucket || '—'}】{' '}
+                  {g.parent_location && g.bucket && g.bucket.startsWith('location:') && (
+                    <span style={{ color: '#1565c0', fontWeight: 500 }}>
+                      {g.parent_location} ›{' '}
+                    </span>
+                  )}
+                  {g.axis_kw}
                 </span>
                 <span className={`badge badge-intent-${g.intent_layer || 'manifest'}`} style={{ marginLeft: 6 }}>
                   {g.intent_layer || '—'}

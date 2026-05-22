@@ -17,6 +17,7 @@ interface Row {
   page_id: string;
   axis_kw: string;
   bucket: string;
+  parent_location: string;     // location bucket時のみ親地名 (例: 三軒茶屋page → 東京)
   intent_layer: string;
   page_cover_size: number;
   pagerank: number | null;
@@ -42,6 +43,7 @@ function rowsToCsv(rows: Row[]): string {
     'page_id',
     'axis_kw',
     'bucket',
+    'parent_location',
     'intent_layer',
     'page_cover_size',
     'pagerank',
@@ -59,6 +61,7 @@ function rowsToCsv(rows: Row[]): string {
         r.page_id,
         r.axis_kw,
         r.bucket,
+        r.parent_location,
         r.intent_layer,
         r.page_cover_size,
         r.pagerank?.toFixed(6) ?? '',
@@ -94,6 +97,19 @@ export function buildPageMembersRows(runId: string): Row[] {
               ELSE COALESCE(cp.title_hint, '') END AS axis_kw,
          CASE WHEN cf.candidate_id IS NOT NULL THEN ''
               ELSE COALESCE(json_extract(page_c.metric_json,'$.bucket'), '') END AS bucket,
+         -- location bucket時のみ親地名 (top自身/sub問わず top値を埋める。top=自身/sub=親)
+         CASE
+           WHEN cf.candidate_id IS NOT NULL THEN ''
+           WHEN json_extract(page_c.metric_json,'$.bucket') LIKE 'location:%' THEN
+             COALESCE(
+               (SELECT CASE WHEN lh.level='top' THEN lh.child_value ELSE lh.parent_value END
+                FROM location_hierarchy lh
+                WHERE lh.run_id=cp.run_id
+                  AND lh.child_value = SUBSTR(json_extract(page_c.metric_json,'$.bucket'), LENGTH('location:')+1)),
+               ''
+             )
+           ELSE ''
+         END AS parent_location,
          COALESCE(il.layer, '') AS intent_layer,
          COALESCE(cp.cover_size, 0) AS page_cover_size,
          pr.score AS pagerank,
@@ -120,7 +136,6 @@ export function buildPageMembersRows(runId: string): Row[] {
          pr.score DESC NULLS LAST,           -- 重要page先
          cp.pick_order ASC NULLS LAST,
          CASE WHEN m.is_representative=1 AND m.cluster_id = cp.cluster_id THEN 0 ELSE 1 END ASC,
-         -- ↑page level rep を最先頭、その後配下記事KW
          (metrics.volume IS NULL) ASC,
          metrics.volume DESC,
          lc.id ASC`,
@@ -141,6 +156,7 @@ export interface PageMembersGroup {
   page_id: string;
   axis_kw: string;
   bucket: string;
+  parent_location: string;        // location bucket時のみ親地名 (top自身/sub親)
   intent_layer: string;
   pagerank: number | null;
   page_cover_size: number;
@@ -163,6 +179,7 @@ export function groupByPage(runId: string): PageMembersGroup[] {
         page_id: r.page_id,
         axis_kw: r.axis_kw,
         bucket: r.bucket,
+        parent_location: r.parent_location ?? '',
         intent_layer: r.intent_layer,
         pagerank: r.pagerank,
         page_cover_size: r.page_cover_size,

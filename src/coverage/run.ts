@@ -9,6 +9,7 @@ import { logger } from '../lib/logger.js';
 import { runAxisClassification } from '../cluster/axes.js';
 import { normalizeAxisValues } from '../cluster/axes-normalize.js';
 import { runIntentFilters } from '../cluster/intent-filters.js';
+import { runLocationHierarchy } from '../cluster/location-hierarchy.js';
 import { runL3 } from '../cluster/l3.js';
 // post-merge は現状 disable (狭く深く志向)。将来再有効化するなら src/cluster/post-merge.ts を import 復活。
 // import { runPostL3Merge } from '../cluster/post-merge.js';
@@ -21,6 +22,7 @@ export interface Phase4Result {
   axes: Awaited<ReturnType<typeof runAxisClassification>> | { skipped: true };
   axesNormalize: Awaited<ReturnType<typeof normalizeAxisValues>> | { skipped: true };
   intentFilters: Awaited<ReturnType<typeof runIntentFilters>>;
+  locationHierarchy: Awaited<ReturnType<typeof runLocationHierarchy>> | { skipped: true };
   l3: Awaited<ReturnType<typeof runL3>>;
   postMerge: { evaluatedPairs: number; merged: number; samples: unknown[] };
   l3Metrics: Awaited<ReturnType<typeof fetchL3Metrics>> | { skipped: true };
@@ -36,6 +38,8 @@ export interface Phase4Options {
   skipNormalize?: boolean;
   /** Skip L3-metrics Ahrefs fetch. Default false. */
   skipMetrics?: boolean;
+  /** Skip Claude-driven location hierarchy classification. Default false. */
+  skipLocationHierarchy?: boolean;
 }
 
 export async function runPhase4(runId: string, opts: Phase4Options = {}): Promise<Phase4Result> {
@@ -54,6 +58,9 @@ export async function runPhase4(runId: string, opts: Phase4Options = {}): Promis
     ? ({ skipped: true } as const)
     : await normalizeAxisValues(runId);
   const intentFilters = await runIntentFilters(runId);
+  const locationHierarchy = opts.skipLocationHierarchy
+    ? ({ skipped: true } as const)
+    : await runLocationHierarchy(runId);
   const l3 = await runL3(runId);
   const l3Metrics = opts.skipMetrics
     ? ({ skipped: true } as const)
@@ -72,12 +79,12 @@ export async function runPhase4(runId: string, opts: Phase4Options = {}): Promis
     eventType: 'phase4.complete',
     entityType: 'run',
     entityId: runId,
-    after: { axes, axesNormalize, intentFilters, l3, postMerge, l3Metrics, nec, compliance, coverage },
+    after: { axes, axesNormalize, intentFilters, locationHierarchy, l3, postMerge, l3Metrics, nec, compliance, coverage },
   });
 
   logger.info(
-    { runId, axes, axesNormalize, intentFilters, l3, postMerge, l3Metrics, nec, compliance, coverage },
+    { runId, axes, axesNormalize, intentFilters, locationHierarchy, l3, postMerge, l3Metrics, nec, compliance, coverage },
     '[Phase4] complete',
   );
-  return { axes, axesNormalize, intentFilters, l3, postMerge, l3Metrics, nec, compliance, coverage };
+  return { axes, axesNormalize, intentFilters, locationHierarchy, l3, postMerge, l3Metrics, nec, compliance, coverage };
 }

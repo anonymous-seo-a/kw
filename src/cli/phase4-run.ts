@@ -18,6 +18,7 @@ async function main() {
       'skip-axes': { type: 'boolean', default: false },
       'skip-normalize': { type: 'boolean', default: false },
       'skip-metrics': { type: 'boolean', default: false },
+      'skip-location-hierarchy': { type: 'boolean', default: false },
     },
   });
   const runId = values['run-id'];
@@ -31,6 +32,7 @@ async function main() {
       skipAxes: values['skip-axes'],
       skipNormalize: values['skip-normalize'],
       skipMetrics: values['skip-metrics'],
+      skipLocationHierarchy: values['skip-location-hierarchy'],
     });
     console.log(JSON.stringify({ runId, ...r }, null, 2));
   } catch (e) {
