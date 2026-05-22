@@ -90,7 +90,7 @@ export async function runIntentFilters(runId: string): Promise<IntentFilterResul
       }
     }
 
-    // 2) brand: brand軸を持つ全候補
+    // 2-a) brand: brand軸を持つ全候補 (Claude AX で検出済み)
     const brandRows = db
       .prepare(
         `SELECT DISTINCT ca.candidate_id, ca.axis_value FROM candidate_axes ca
@@ -98,14 +98,15 @@ export async function runIntentFilters(runId: string): Promise<IntentFilterResul
          WHERE lc.run_id=? AND ca.axis='brand'`,
       )
       .all(runId) as Array<{ candidate_id: number; axis_value: string }>;
+    const filteredByCand = new Map<number, string>();
     for (const r of brandRows) {
-      // 既に forum_qa で filtered なら skip (重複避け)
       const existing = db
         .prepare(
           `SELECT 1 FROM candidate_filters WHERE run_id=? AND candidate_id=? AND filter_kind='forum_qa'`,
         )
         .get(runId, r.candidate_id);
       if (existing) continue;
+      if (filteredByCand.has(r.candidate_id)) continue;
       ins.run(
         runId,
         r.candidate_id,
@@ -113,7 +114,50 @@ export async function runIntentFilters(runId: string): Promise<IntentFilterResul
         r.axis_value,
         `competitor brand "${r.axis_value}" — 自社silo target外`,
       );
+      filteredByCand.set(r.candidate_id, r.axis_value);
       filteredBrand++;
+    }
+
+    // 2-b) brand rule augmentation: AX が見落とした brand-containing KW を文字列マッチで補完。
+    // brand discovery で投入した brand 名リスト + 既に検出された brand 軸値 を組み合わせる。
+    const brandStrings = new Set<string>();
+    const discoveredBrands = db
+      .prepare(
+        `SELECT keyword FROM l1_candidates WHERE run_id=? AND sources_json LIKE '%claude_brand_discovery%'`,
+      )
+      .all(runId) as Array<{ keyword: string }>;
+    for (const r of discoveredBrands) {
+      const v = r.keyword.trim();
+      if (v.length >= 3) brandStrings.add(v);
+    }
+    for (const r of brandRows) {
+      const v = r.axis_value.trim();
+      if (v.length >= 3) brandStrings.add(v);
+    }
+
+    // 検出されてない候補を scan
+    const alreadyFiltered = new Set<number>();
+    const existing = db
+      .prepare(`SELECT candidate_id FROM candidate_filters WHERE run_id=?`)
+      .all(runId) as Array<{ candidate_id: number }>;
+    for (const r of existing) alreadyFiltered.add(r.candidate_id);
+
+    for (const c of candidates) {
+      if (alreadyFiltered.has(c.id)) continue;
+      const kwLower = c.keyword.toLowerCase();
+      for (const brand of brandStrings) {
+        if (kwLower.includes(brand.toLowerCase())) {
+          ins.run(
+            runId,
+            c.id,
+            'brand',
+            brand,
+            `brand-augmentation: matched brand "${brand}" (rule-based fallback)`,
+          );
+          filteredBrand++;
+          break;
+        }
+      }
     }
   })();
 

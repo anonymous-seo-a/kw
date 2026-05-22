@@ -17,6 +17,27 @@ import { audit } from '../lib/audit.js';
 // brand/location/drug/core は granular保持 (各値が個別エンティティ)
 const NORMALIZE_AXES = ['cost', 'trust', 'format', 'informational', 'condition', 'audience'] as const;
 
+/**
+ * 汎用 format 値 — 実質 core と同義。
+ * "クリニック/病院/医院/専門クリニック" は AGA silo において
+ * "AGAサービス全般" を指す 普通名詞であり、modifier ではない。
+ * これらの軸付与は L3 で「format:クリニック」という別バケット化を引き起こし
+ * core: バケットと無駄に分裂させるため、axis自体を削除して core 扱いにする。
+ *
+ * 具体的な施設形態 (オンライン診療/皮膚科/市販/通販/専門医院) は format として残す。
+ */
+const GENERIC_FORMAT_DEMOTE: string[] = [
+  'クリニック',
+  '病院',
+  '医院',
+  '専門クリニック',
+  'AGAクリニック',
+  'AGA専門クリニック',
+  'AGA専門医院',
+  '総合',
+  '総合病院',
+];
+
 const AXIS_CONTEXT: Record<(typeof NORMALIZE_AXES)[number], string> = {
   cost: '価格/コスト系の修飾語。"保険適用"は別意図(保険適用可否)として独立させる。それ以外(安い/費用/料金/相場/月額/格安/高い)は同じSEO意図として統合してよい。"無料"は別意図。',
   trust: '信頼/社会的証明系。"比較/ランキング/おすすめ/人気/比較サイト/比較ランキング/おすすめランキング/おすすめ15院" は全て同じ「ベスト院リスト」意図 → 統合。"口コミ/評判/レビュー" は別意図。"後悔/失敗/効果ない/危ない" はネガティブ体験談で別意図。"知恵袋" はQ&Aで別意図。',
@@ -171,6 +192,22 @@ export async function normalizeAxisValues(runId: string): Promise<NormalizeResul
       }
       for (const m of members) del.run(g.axis, m, runId);
     }
+
+    // 汎用 format 値 (クリニック/病院/医院 等) は axis 自体を削除 → core 扱いになる。
+    // candidate に他axisがあれば残す。format axis 1個だけの候補は完全に core 化する。
+    const ph2 = GENERIC_FORMAT_DEMOTE.map(() => '?').join(',');
+    const beforeDel = (db
+      .prepare(
+        `SELECT COUNT(*) AS n FROM candidate_axes ca
+         JOIN l1_candidates lc ON lc.id=ca.candidate_id
+         WHERE lc.run_id=? AND ca.axis='format' AND ca.axis_value IN (${ph2})`,
+      )
+      .get(runId, ...GENERIC_FORMAT_DEMOTE) as { n: number }).n;
+    db.prepare(
+      `DELETE FROM candidate_axes WHERE axis='format' AND axis_value IN (${ph2})
+         AND candidate_id IN (SELECT id FROM l1_candidates WHERE run_id=?)`,
+    ).run(...GENERIC_FORMAT_DEMOTE, runId);
+    logger.info({ runId, demotedRows: beforeDel, demoteList: GENERIC_FORMAT_DEMOTE }, '[AX-NORM] generic format demoted to core');
   })();
 
   audit({

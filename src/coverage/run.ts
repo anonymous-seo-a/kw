@@ -10,7 +10,8 @@ import { runAxisClassification } from '../cluster/axes.js';
 import { normalizeAxisValues } from '../cluster/axes-normalize.js';
 import { runIntentFilters } from '../cluster/intent-filters.js';
 import { runL3 } from '../cluster/l3.js';
-import { runPostL3Merge } from '../cluster/post-merge.js';
+// post-merge は現状 disable (狭く深く志向)。将来再有効化するなら src/cluster/post-merge.ts を import 復活。
+// import { runPostL3Merge } from '../cluster/post-merge.js';
 import { fetchL3Metrics } from '../enrichment/l3-metrics.js';
 import { runNec } from '../necessity/nec.js';
 import { applyComplianceFloor } from '../necessity/compliance-floor.js';
@@ -21,7 +22,7 @@ export interface Phase4Result {
   axesNormalize: Awaited<ReturnType<typeof normalizeAxisValues>> | { skipped: true };
   intentFilters: Awaited<ReturnType<typeof runIntentFilters>>;
   l3: Awaited<ReturnType<typeof runL3>>;
-  postMerge: Awaited<ReturnType<typeof runPostL3Merge>>;
+  postMerge: { evaluatedPairs: number; merged: number; samples: unknown[] };
   l3Metrics: Awaited<ReturnType<typeof fetchL3Metrics>> | { skipped: true };
   nec: Awaited<ReturnType<typeof runNec>>;
   compliance: Awaited<ReturnType<typeof applyComplianceFloor>>;
@@ -58,8 +59,10 @@ export async function runPhase4(runId: string, opts: Phase4Options = {}): Promis
     ? ({ skipped: true } as const)
     : await fetchL3Metrics(runId);
   const nec = await runNec(runId);
-  // post-merge は NEC の後に実行 (NECが status='active' に reset するため)
-  const postMerge = await runPostL3Merge(runId);
+  // post-merge は無効化。アフィリエイトメディア「狭く深く」志向では bucket境界を厳守し、
+  // 軸を跨ぐ自動 merge は意図混在を生むため不採用。
+  // 汎用 format (クリニック/病院/医院/専門クリニック) は axes-normalize で core に降格済。
+  const postMerge = { evaluatedPairs: 0, merged: 0, samples: [] };
   const compliance = await applyComplianceFloor(runId);
   const coverage = await runCoverage(runId);
 
