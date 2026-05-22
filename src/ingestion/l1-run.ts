@@ -12,14 +12,24 @@ import { ingestFanout } from './l1-fanout.js';
 import { ingestSerpL1 } from './l1-serp.js';
 import { ingestNlpL1 } from './l1-nlp.js';
 import { ingestAhrefsL1 } from './l1-ahrefs.js';
+import { ingestBrandDiscovery } from './l1-brand-discovery.js';
 
 export interface L1RunOptions {
   runId: string;
   seedKw: string;
   vertical?: string | null;
   /** Skips for selective re-run. */
-  skip?: { gsc?: boolean; fanout?: boolean; serp?: boolean; nlp?: boolean; ahrefs?: boolean };
+  skip?: {
+    gsc?: boolean;
+    fanout?: boolean;
+    serp?: boolean;
+    nlp?: boolean;
+    ahrefs?: boolean;
+    brandDiscovery?: boolean;
+  };
   ahrefsLimit?: number;
+  brandMax?: number;
+  brandPerLimit?: number;
 }
 
 export async function runL1(opts: L1RunOptions): Promise<{
@@ -29,6 +39,7 @@ export async function runL1(opts: L1RunOptions): Promise<{
   ahrefsStats: Record<string, { rows: number; unitsActual: number }>;
   ahrefsInserted: number;
   ahrefsUnits: number;
+  brandDiscovery: { brandsListed: number; brandsQueried: number; candidatesAdded: number; unitsTotal: number };
 }> {
   setRunStatus(opts.runId, 'l1');
   const { runId, seedKw, vertical } = opts;
@@ -83,6 +94,31 @@ export async function runL1(opts: L1RunOptions): Promise<{
     }
   }
 
+  // 6) Brand discovery (Claude+Ahrefs) — 競合brand網羅
+  let brandDiscoveryStats: {
+    brandsListed: number;
+    brandsQueried: number;
+    candidatesAdded: number;
+    unitsTotal: number;
+  } = { brandsListed: 0, brandsQueried: 0, candidatesAdded: 0, unitsTotal: 0 };
+  if (!skip.brandDiscovery) {
+    const r = await ingestBrandDiscovery(runId, {
+      seedKw,
+      vertical,
+      maxBrands: opts.brandMax ?? 30,
+      perBrandLimit: opts.brandPerLimit ?? 50,
+    });
+    brandDiscoveryStats = {
+      brandsListed: r.brandsListed.length,
+      brandsQueried: r.brandsQueried,
+      candidatesAdded: r.candidatesAdded,
+      unitsTotal: r.unitsTotal,
+    };
+    if (r.budgetExceeded) {
+      logger.warn({ runId, ...r.budgetExceeded }, '[L1] brand-discovery stopped early on budget');
+    }
+  }
+
   // Final counts
   const candidates = (
     kwDb().prepare('SELECT COUNT(*) AS n FROM l1_candidates WHERE run_id=?').get(runId) as {
@@ -103,9 +139,28 @@ export async function runL1(opts: L1RunOptions): Promise<{
   for (const r of byProviderRows) byProvider[r.provider] = r.n;
 
   logger.info(
-    { runId, candidates, byProvider, gscRows, serpStats, entitiesTotal, ahrefsStats, ahrefsInserted, ahrefsUnits },
+    {
+      runId,
+      candidates,
+      byProvider,
+      gscRows,
+      serpStats,
+      entitiesTotal,
+      ahrefsStats,
+      ahrefsInserted,
+      ahrefsUnits,
+      brandDiscoveryStats,
+    },
     '[L1] complete',
   );
   setRunStatus(opts.runId, 'l1_done');
-  return { candidates, byProvider, entitiesTotal, ahrefsStats, ahrefsInserted, ahrefsUnits };
+  return {
+    candidates,
+    byProvider,
+    entitiesTotal,
+    ahrefsStats,
+    ahrefsInserted,
+    ahrefsUnits,
+    brandDiscovery: brandDiscoveryStats,
+  };
 }

@@ -26,6 +26,9 @@ async function main() {
       'skip-nlp': { type: 'boolean', default: false },
       'skip-ahrefs': { type: 'boolean', default: false },
       'ahrefs-limit': { type: 'string' },
+      'skip-brand-discovery': { type: 'boolean', default: false },
+      'brand-max': { type: 'string' },
+      'brand-per-limit': { type: 'string' },
     },
   });
   const seed = values.seed;
@@ -54,8 +57,11 @@ async function main() {
         serp: values['skip-serp'],
         nlp: values['skip-nlp'],
         ahrefs: values['skip-ahrefs'],
+        brandDiscovery: values['skip-brand-discovery'],
       },
       ahrefsLimit: values['ahrefs-limit'] ? Number(values['ahrefs-limit']) : undefined,
+      brandMax: values['brand-max'] ? Number(values['brand-max']) : undefined,
+      brandPerLimit: values['brand-per-limit'] ? Number(values['brand-per-limit']) : undefined,
     });
     console.log(JSON.stringify({ runId, ...r }, null, 2));
   } catch (e) {

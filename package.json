@@ -21,6 +21,7 @@
     "verify:db": "tsx scripts/verify-db.ts",
     "verify:apis": "tsx scripts/verify-apis.ts",
     "l1:run": "tsx src/cli/l1-run.ts",
+    "l1:brand-discovery": "tsx src/cli/l1-brand-discovery.ts",
     "l1:fanout": "tsx src/cli/l1-fanout.ts",
     "l1:gsc": "tsx src/cli/l1-gsc.ts",
     "l1:serp": "tsx src/cli/l1-serp.ts",

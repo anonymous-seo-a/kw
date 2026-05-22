@@ -129,27 +129,30 @@ OUTPUT: §7
 - インベントリ = 和集合（recall優先・漏らさない）
 - ページ化 = 必然性ゲート（[NEC]で絞る）
 
-### Modifier 軸の直交 (rev 2026-05-22-2)
+### Modifier 軸の直交 (rev 2026-05-22-2 / brand追加 rev 2026-05-22-3)
 
-silo seed の意図核に対して **8つの modifier 軸** が直交し並列。各page はそのうち**1軸×値**で構成 (multi-axisの交差KWはpassageとして親pageに吸収):
+silo seed の意図核に対して **10の modifier 軸** が直交し並列。各page はそのうち**1軸×値**で構成 (multi-axisの交差KWはpassageとして親pageに吸収):
 
-| 軸 | 意味 | 例 |
+| 軸 | 意味 | 例 (AGAジャンル) |
 |---|---|---|
 | `core` | 0軸KW (純intent) | "aga 治療", "aga おすすめ" |
 | `location` | 地域 | 東京/大阪/福岡/上野/梅田/都内 |
 | `cost` | 価格/保険 | 保険適用/安い/料金/相場/費用 |
-| `drug` | 薬剤名 | フィナステリド/ミノキシジル/プロペシア |
+| `drug` | 薬剤名 (一般名) | フィナステリド/ミノキシジル/プロペシア |
 | `audience` | 性別/年齢/属性 | 女性/男性/メンズ/20代/30代 |
-| `format` | 形態 | オンライン/皮膚科/専門/総合 |
+| `format` | 形態 (一般名) | オンライン/皮膚科/専門/総合 |
 | `condition` | 症状/状態 | M字/初期/進行/手遅れ/つむじ |
-| `trust` | 信頼/評判 | 口コミ/評判/知恵袋/比較/ランキング |
+| `trust` | 信頼/評判 | 口コミ/評判/知恵袋/比較/ランキング/2ch |
 | `informational` | 情報意図 | とは/原因/仕組み/予防/遺伝/治る |
+| **`brand`** | **競合ブランド名/施設名** | **AGAスキンクリニック/クリニックフォア/DMMオンラインクリニック** |
 
 **運用ルール**:
 - L3クラスタリングは **軸バケット内** に限定。軸を跨いだ SERP重複は意図的に切断
 - 2+軸を持つKW = bridge → NEC で passage_absorbed (親page決定は最近接cluster代表とのcosine)
 - 代表KWは pure (非bridge) メンバから選出。bridgeは代表になれない
 - これにより "aga 東京 保険適用" のような bridge は location/cost のどちらかの passageに収まり、合体page (=美しくない混在) は発生しない
+- **brandバケットのクラスタは NEC で自動 passage_absorbed**: 自社siloの中に「競合ブランド名+α」を targeting する page は作らない (出し切りは inventory で担保。brand候補は他pageの passageとして吸収)
+- brand軸の検出は Claude が silo vertical の文脈で動的に判定 (vertical依存・一般知識ベース。AGAなら AGAスキンクリニック等、脱毛なら ゴリラクリニック等を識別)
 
 ### 校正プロトコル（AGAサイロ実データで実測）
 

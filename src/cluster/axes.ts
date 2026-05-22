@@ -21,7 +21,8 @@ export type Axis =
   | 'format'
   | 'condition'
   | 'trust'
-  | 'informational';
+  | 'informational'
+  | 'brand';
 
 const ALL_AXES: Axis[] = [
   'core',
@@ -33,6 +34,7 @@ const ALL_AXES: Axis[] = [
   'condition',
   'trust',
   'informational',
+  'brand',
 ];
 
 interface ClassifyRow {
@@ -43,30 +45,37 @@ interface ClassifyRow {
 const BATCH_SIZE = 40;
 
 function buildSystem(seedKw: string, vertical: string | null): string {
-  return `あなたは検索KWの modifier 軸分類器です。silo seed "${seedKw}"${vertical ? ` (領域: ${vertical})` : ''} に対し、与えられた候補KWを以下9軸に分類してください。
+  return `あなたは検索KWの modifier 軸分類器です。silo seed "${seedKw}"${vertical ? ` (領域: ${vertical})` : ''} に対し、与えられた候補KWを以下10軸に分類してください。
 
 軸定義:
 - core: silo intent (例: "aga おすすめ", "aga 治療") の純粋表現。他modifier無し
 - location: 地域名 (東京/大阪/福岡/上野/梅田/都内/関西/地方名...)
 - cost: 価格/保険意図 (保険適用/安い/料金/相場/費用/高い/月額)
-- drug: 具体的薬剤名 (フィナステリド/ミノキシジル/プロペシア/デュタステリド/ザガーロ等)
+- drug: 具体的薬剤名/薬剤一般名 (フィナステリド/ミノキシジル/プロペシア/デュタステリド/ザガーロ等)
 - audience: 性別/年齢/属性 (女性/男性/メンズ/20代/30代/若年/学生)
-- format: 形態 (オンライン/皮膚科/専門クリニック/総合/個人医院)
+- format: 形態の **一般名称** (オンライン/皮膚科/専門クリニック/総合/個人医院/通販/薬局)
 - condition: 症状/状態の細分化 (M字/初期/進行/手遅れ/効果ない/つむじ/前頭部)
-- trust: 信頼/評判 (口コミ/評判/知恵袋/比較/ランキング/失敗/後悔)
+- trust: 信頼/評判 (口コミ/評判/知恵袋/比較/ランキング/失敗/後悔/2ch/5ch)
 - informational: 情報意図 (とは/原因/仕組み/予防/遺伝/治る/見分け方/メカニズム)
+- brand: **特定の競合ブランド名/施設名/サービス名/事業者名** (例: AGAスキンクリニック / クリニックフォア / DMMオンラインクリニック / ゴリラクリニック / リーブ21 / 湘南美容クリニック)
+  ⚠ brand と format は区別する:
+    * brand = 固有名詞 (○○クリニック 等の具体名)
+    * format = 一般名詞 (クリニック / 病院 / 薬局 等のカテゴリ)
+  ⚠ brand と drug の区別: 薬剤の一般名は drug、特定の商品名は brand
 
 ルール:
-- 軸は **複数同時付与可** (例: "aga 東京 保険適用" → [location: "東京"], [cost: "保険適用"])
+- 軸は **複数同時付与可** (例: "AGAスキンクリニック 評判 2ch" → [brand:"AGAスキンクリニック"], [trust:"2ch"])
 - "core" は **他軸が無いときのみ** 付与 (純intent KW)
-- axis_value は KWからの抜粋語 (location なら地名そのもの)。core は null
+- axis_value は KWからの抜粋語 (location なら地名そのもの・brand ならブランド名そのもの)。core は null
 - confidence は 0.0-1.0
+- silo領域 "${seedKw}"${vertical ? ` / ${vertical}` : ''} の文脈における競合ブランドかを判定 (vertical依存・一般知識でOK)
 - 出力は **JSON配列のみ** (前後に文を書かない)
 
 出力形式:
 [
   {"kw": "aga 東京 おすすめ", "axes": [{"axis":"location","value":"東京","confidence":0.95}]},
   {"kw": "aga 治療", "axes": [{"axis":"core","value":null,"confidence":0.9}]},
+  {"kw": "AGAスキンクリニック 評判 2ch", "axes": [{"axis":"brand","value":"AGAスキンクリニック","confidence":0.95},{"axis":"trust","value":"2ch","confidence":0.9}]},
   {"kw": "aga治療 東京 保険適用", "axes": [{"axis":"location","value":"東京","confidence":0.95},{"axis":"cost","value":"保険適用","confidence":0.95}]}
 ]`;
 }

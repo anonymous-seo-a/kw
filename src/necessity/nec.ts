@@ -22,6 +22,7 @@ export interface NecResult {
   absorbed: number;
   absorbedByVolume: number;
   absorbedBySingleton: number;
+  absorbedByBrand: number;
   volumeMinClusterSum: number;
   clustersWithoutVolume: number;
 }
@@ -31,8 +32,11 @@ export async function runNec(runId: string): Promise<NecResult> {
 
   const db = kwDb();
   const clusters = db
-    .prepare(`SELECT cluster_id, size FROM l3_clusters WHERE run_id=? AND status='active'`)
-    .all(runId) as Array<{ cluster_id: string; size: number }>;
+    .prepare(
+      `SELECT cluster_id, size, json_extract(metric_json,'$.bucket') AS bucket
+       FROM l3_clusters WHERE run_id=? AND status='active'`,
+    )
+    .all(runId) as Array<{ cluster_id: string; size: number; bucket: string | null }>;
   if (clusters.length === 0) {
     return {
       totalClusters: 0,
@@ -40,6 +44,7 @@ export async function runNec(runId: string): Promise<NecResult> {
       absorbed: 0,
       absorbedByVolume: 0,
       absorbedBySingleton: 0,
+      absorbedByBrand: 0,
       volumeMinClusterSum: volumeMin,
       clustersWithoutVolume: 0,
     };
@@ -63,6 +68,7 @@ export async function runNec(runId: string): Promise<NecResult> {
     repVec: Float32Array | null;
     sumVolume: number;
     volumeRows: number;
+    isBrand: boolean;
   };
   const info: ClusterInfo[] = clusters.map((c) => {
     const rep = db
@@ -79,6 +85,7 @@ export async function runNec(runId: string): Promise<NecResult> {
       repVec: vec,
       sumVolume: vRow.sum_vol ?? 0,
       volumeRows: vRow.volume_rows ?? 0,
+      isBrand: (c.bucket ?? '').startsWith('brand:'),
     };
   });
 
@@ -100,6 +107,7 @@ export async function runNec(runId: string): Promise<NecResult> {
   let absorbed = 0;
   let absorbedByVolume = 0;
   let absorbedBySingleton = 0;
+  let absorbedByBrand = 0;
   let clustersWithoutVolume = 0;
 
   db.transaction(() => {
@@ -111,6 +119,35 @@ export async function runNec(runId: string): Promise<NecResult> {
 
     for (const c of info) {
       if (c.volumeRows === 0) clustersWithoutVolume++;
+
+      // ルール0: brand bucket → 自動 passage_absorbed
+      // 競合ブランド名ページは自社silo内には作らない (出し切りはinventory側で担保)
+      if (c.isBrand) {
+        const target = c.repVec ? pickNearestStrong(c, strongClusters) : null;
+        if (target) {
+          ins.run(
+            runId,
+            c.id,
+            'passage_absorbed',
+            `brand bucket auto-absorbed into ${target.id} (cosine=${target.sim.toFixed(3)})`,
+            target.id,
+          );
+          updateCluster.run('absorbed', target.id, runId, c.id);
+          absorbed++;
+          absorbedByBrand++;
+        } else {
+          // 吸収先なし → 例外的にpage化 (孤立brand)
+          ins.run(
+            runId,
+            c.id,
+            'page',
+            `brand bucket but no absorption target (orphan)`,
+            null,
+          );
+          pages++;
+        }
+        continue;
+      }
 
       // ルール1: singleton
       if (c.size < 2) {
@@ -196,6 +233,7 @@ export async function runNec(runId: string): Promise<NecResult> {
       absorbed,
       absorbedBySingleton,
       absorbedByVolume,
+      absorbedByBrand,
       volumeMin,
       clustersWithoutVolume,
     },
@@ -208,6 +246,7 @@ export async function runNec(runId: string): Promise<NecResult> {
     absorbed,
     absorbedByVolume,
     absorbedBySingleton,
+    absorbedByBrand,
     volumeMinClusterSum: volumeMin,
     clustersWithoutVolume,
   };

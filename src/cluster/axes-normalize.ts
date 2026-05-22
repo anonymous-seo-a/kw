@@ -14,6 +14,7 @@ import { claudeText } from '../lib/claude.js';
 import { logger } from '../lib/logger.js';
 import { audit } from '../lib/audit.js';
 
+// brand/location/drug/core は granular保持 (各値が個別エンティティ)
 const NORMALIZE_AXES = ['cost', 'trust', 'format', 'informational', 'condition', 'audience'] as const;
 
 const AXIS_CONTEXT: Record<(typeof NORMALIZE_AXES)[number], string> = {
