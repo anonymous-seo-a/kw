@@ -186,27 +186,11 @@ export async function runL3(runId: string): Promise<L3Result> {
     const n = members.length;
     if (n === 0) continue;
 
-    const uf = new UnionFind(n);
-    for (let i = 0; i < n; i++) {
-      for (let j = i + 1; j < n; j++) {
-        let inter = 0;
-        const setI = members[i]!.topUrls;
-        const setJ = members[j]!.topUrls;
-        for (const u of setI) if (setJ.has(u)) inter++;
-        if (inter < th.serpOverlapN) continue;
-        const c = cosine(members[i]!.vector, members[j]!.vector);
-        if (c < th.cosineThreshold) continue;
-        uf.union(i, j);
-      }
-    }
-
-    const compMap = new Map<number, number[]>();
-    for (let i = 0; i < n; i++) {
-      const root = uf.find(i);
-      if (!compMap.has(root)) compMap.set(root, []);
-      compMap.get(root)!.push(i);
-    }
-    const components = [...compMap.values()].sort((a, b) => b.length - a.length);
+    // 仕様§4 rev 2026-05-22-2: 正規化後のバケット = 1クラスタ (バケット内 SERP+cosine 再分割は廃止)
+    // 理由: axis_value canonical で「同一SEOエンティティ」と既に判定済み。SERP分散は意図差ではなく
+    //       競合記事構成の差。Daikiの指摘「同じエンティティで違うワードは1つにくくりたい」を遵守。
+    // 旧: union-find by (SERP重複≥N) ∩ (cosine≥T) ← 廃止
+    const components: number[][] = [Array.from({ length: n }, (_, i) => i)];
 
     db.transaction(() => {
       for (const comp of components) {

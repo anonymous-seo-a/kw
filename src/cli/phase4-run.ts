@@ -16,6 +16,7 @@ async function main() {
     options: {
       'run-id': { type: 'string' },
       'skip-axes': { type: 'boolean', default: false },
+      'skip-normalize': { type: 'boolean', default: false },
     },
   });
   const runId = values['run-id'];
@@ -25,7 +26,10 @@ async function main() {
   }
 
   try {
-    const r = await runPhase4(runId, { skipAxes: values['skip-axes'] });
+    const r = await runPhase4(runId, {
+      skipAxes: values['skip-axes'],
+      skipNormalize: values['skip-normalize'],
+    });
     console.log(JSON.stringify({ runId, ...r }, null, 2));
   } catch (e) {
     setRunStatus(runId, 'failed', (e as Error).message);

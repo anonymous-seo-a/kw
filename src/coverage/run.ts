@@ -7,6 +7,7 @@ import { setRunStatus } from '../lib/runs.js';
 import { audit } from '../lib/audit.js';
 import { logger } from '../lib/logger.js';
 import { runAxisClassification } from '../cluster/axes.js';
+import { normalizeAxisValues } from '../cluster/axes-normalize.js';
 import { runL3 } from '../cluster/l3.js';
 import { runNec } from '../necessity/nec.js';
 import { applyComplianceFloor } from '../necessity/compliance-floor.js';
@@ -14,6 +15,7 @@ import { runCoverage } from './setcover.js';
 
 export interface Phase4Result {
   axes: Awaited<ReturnType<typeof runAxisClassification>> | { skipped: true };
+  axesNormalize: Awaited<ReturnType<typeof normalizeAxisValues>> | { skipped: true };
   l3: Awaited<ReturnType<typeof runL3>>;
   nec: Awaited<ReturnType<typeof runNec>>;
   compliance: Awaited<ReturnType<typeof applyComplianceFloor>>;
@@ -23,6 +25,8 @@ export interface Phase4Result {
 export interface Phase4Options {
   /** Skip axis classification (use existing candidate_axes rows if any). Default false. */
   skipAxes?: boolean;
+  /** Skip axis-value normalization. Default false. */
+  skipNormalize?: boolean;
 }
 
 export async function runPhase4(runId: string, opts: Phase4Options = {}): Promise<Phase4Result> {
@@ -37,6 +41,9 @@ export async function runPhase4(runId: string, opts: Phase4Options = {}): Promis
   const axes = opts.skipAxes
     ? ({ skipped: true } as const)
     : await runAxisClassification(runId);
+  const axesNormalize = opts.skipNormalize
+    ? ({ skipped: true } as const)
+    : await normalizeAxisValues(runId);
   const l3 = await runL3(runId);
   const nec = await runNec(runId);
   const compliance = await applyComplianceFloor(runId);
@@ -48,9 +55,9 @@ export async function runPhase4(runId: string, opts: Phase4Options = {}): Promis
     eventType: 'phase4.complete',
     entityType: 'run',
     entityId: runId,
-    after: { axes, l3, nec, compliance, coverage },
+    after: { axes, axesNormalize, l3, nec, compliance, coverage },
   });
 
-  logger.info({ runId, axes, l3, nec, compliance, coverage }, '[Phase4] complete');
-  return { axes, l3, nec, compliance, coverage };
+  logger.info({ runId, axes, axesNormalize, l3, nec, compliance, coverage }, '[Phase4] complete');
+  return { axes, axesNormalize, l3, nec, compliance, coverage };
 }
