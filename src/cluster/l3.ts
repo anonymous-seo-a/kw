@@ -1,10 +1,16 @@
 /**
- * [L3] SERPクラスタリング (Koray法準拠):
- *   辺 = (SERP重複≥serp_overlap_n) ∩ (cosine≥cosine_threshold) を満たす候補ペア
- *   union-find → 連結成分 → クラスタ = ページ単位候補
+ * [L3] 軸事前分類 (AX) 経由のSERPクラスタリング (Koray法準拠 + 軸直交分離):
  *
- * 入力: density signal で in-region と判定された候補のみを対象
- * 出力: l3_clusters / l3_cluster_members
+ *   1. in-region 候補 (density signal判定) を [AX] のバケットに振り分け:
+ *        - 0軸/core → 'core:' バケット
+ *        - 1軸単純 → '<axis>:<value>' バケット (例: 'location:東京')
+ *        - 2+軸     → bridge (一旦保留・後段で passage として最近接クラスタに吸収)
+ *   2. 各バケット内で union-find: (SERP重複≥serp_overlap_n) ∩ (cosine≥cosine_threshold)
+ *   3. bridge を後付け追加: 最大cosineクラスタに is_representative=0 のメンバとして吸収
+ *   4. 代表KWは pure (非bridge) メンバから選出 (bridge は代表になれない)
+ *
+ * 仕様 §4 rev 2026-05-22-2: 軸 (location/cost/drug/audience/format/condition/trust/informational)
+ * は直交し並列。bridgeはpassage_absorbed相当。
  */
 import { kwDb, serpCacheDb } from '../lib/db.js';
 import { cosine } from '../lib/voyage.js';
@@ -40,12 +46,23 @@ interface InRegionCand {
   candidateId: number;
   keyword: string;
   vector: Float32Array;
-  cacheKey: string;
   topUrls: Set<string>;
+  bucket: string | null; // null = unclassified or bridge (not in any pure bucket)
+  isBridge: boolean;
+}
+
+function bucketForCandidate(
+  axes: Array<{ axis: string; axis_value: string | null }>,
+): { bucket: string | null; isBridge: boolean } {
+  if (axes.length === 0) return { bucket: 'core:', isBridge: false };
+  const nonCore = axes.filter((a) => a.axis !== 'core');
+  if (nonCore.length === 0) return { bucket: 'core:', isBridge: false };
+  const distinct = new Set(nonCore.map((a) => `${a.axis}:${a.axis_value ?? ''}`));
+  if (distinct.size >= 2) return { bucket: null, isBridge: true };
+  return { bucket: [...distinct][0]!, isBridge: false };
 }
 
 function loadInRegion(runId: string): InRegionCand[] {
-  // density signal の source_meta_json から candidateId を取得
   const densityRows = kwDb()
     .prepare(
       `SELECT json_extract(source_meta_json, '$.candidateId') AS cid
@@ -56,10 +73,9 @@ function loadInRegion(runId: string): InRegionCand[] {
   const inRegionIds = new Set(
     densityRows.map((r) => r.cid).filter((v): v is number => typeof v === 'number'),
   );
+  if (inRegionIds.size === 0) return [];
 
   const vectors = loadRunVectors(runId).filter((v) => inRegionIds.has(v.candidateId));
-
-  // 各候補のcache_key
   const fpRows = kwDb()
     .prepare(
       `SELECT lf.candidate_id, lf.cache_key
@@ -70,10 +86,24 @@ function loadInRegion(runId: string): InRegionCand[] {
     .all(runId) as Array<{ candidate_id: number; cache_key: string }>;
   const cacheByCand = new Map(fpRows.map((r) => [r.candidate_id, r.cache_key] as const));
 
-  // 各cache_key の top URLs
   const urlStmt = serpCacheDb().prepare(
     'SELECT url FROM serp_top_urls WHERE cache_key=? ORDER BY rank LIMIT 10',
   );
+
+  // 軸を一括ロード
+  const axisRows = kwDb()
+    .prepare(
+      `SELECT ca.candidate_id, ca.axis, ca.axis_value
+       FROM candidate_axes ca
+       JOIN l1_candidates lc ON lc.id=ca.candidate_id
+       WHERE lc.run_id=?`,
+    )
+    .all(runId) as Array<{ candidate_id: number; axis: string; axis_value: string | null }>;
+  const axesByCand = new Map<number, Array<{ axis: string; axis_value: string | null }>>();
+  for (const r of axisRows) {
+    if (!axesByCand.has(r.candidate_id)) axesByCand.set(r.candidate_id, []);
+    axesByCand.get(r.candidate_id)!.push({ axis: r.axis, axis_value: r.axis_value });
+  }
 
   const out: InRegionCand[] = [];
   for (const v of vectors) {
@@ -81,12 +111,14 @@ function loadInRegion(runId: string): InRegionCand[] {
     if (!ck) continue;
     const urls = (urlStmt.all(ck) as Array<{ url: string }>).map((x) => x.url);
     if (urls.length === 0) continue;
+    const { bucket, isBridge } = bucketForCandidate(axesByCand.get(v.candidateId) ?? []);
     out.push({
       candidateId: v.candidateId,
       keyword: v.keyword,
       vector: v.vector,
-      cacheKey: ck,
       topUrls: new Set(urls),
+      bucket,
+      isBridge,
     });
   }
   return out;
@@ -95,130 +127,201 @@ function loadInRegion(runId: string): InRegionCand[] {
 export interface L3Result {
   thresholds: { serpOverlapN: number; cosineThreshold: number };
   inRegion: number;
-  edges: number;
-  clusters: number;
+  buckets: Record<string, { members: number; clusters: number; largest: number }>;
+  bridgesAssigned: number;
+  bridgesUnassigned: number;
+  clustersTotal: number;
+  pages: number; // size >= 2 (NEC前提準備)
   singletons: number;
-  largestCluster: number;
 }
 
 export async function runL3(runId: string): Promise<L3Result> {
   const th = thresholds();
-  const inRegion = loadInRegion(runId);
-  const n = inRegion.length;
-  if (n === 0) {
+  const all = loadInRegion(runId);
+  if (all.length === 0) {
     return {
       thresholds: { serpOverlapN: th.serpOverlapN, cosineThreshold: th.cosineThreshold },
       inRegion: 0,
-      edges: 0,
-      clusters: 0,
+      buckets: {},
+      bridgesAssigned: 0,
+      bridgesUnassigned: 0,
+      clustersTotal: 0,
+      pages: 0,
       singletons: 0,
-      largestCluster: 0,
     };
   }
 
-  const uf = new UnionFind(n);
-  let edges = 0;
-  // 辺判定: O(n^2/2). n=180 で ~16k pair → 数十ms程度
-  for (let i = 0; i < n; i++) {
-    for (let j = i + 1; j < n; j++) {
-      // SERP重複
-      let inter = 0;
-      const setI = inRegion[i]!.topUrls;
-      const setJ = inRegion[j]!.topUrls;
-      for (const u of setI) if (setJ.has(u)) inter++;
-      if (inter < th.serpOverlapN) continue;
-      // cosine
-      const c = cosine(inRegion[i]!.vector, inRegion[j]!.vector);
-      if (c < th.cosineThreshold) continue;
-      uf.union(i, j);
-      edges++;
-    }
+  // バケット振り分け
+  const pure = all.filter((c) => !c.isBridge);
+  const bridges = all.filter((c) => c.isBridge);
+  const byBucket = new Map<string, InRegionCand[]>();
+  for (const c of pure) {
+    const b = c.bucket ?? 'core:';
+    if (!byBucket.has(b)) byBucket.set(b, []);
+    byBucket.get(b)!.push(c);
   }
 
-  // 連結成分集約
-  const compMap = new Map<number, number[]>();
-  for (let i = 0; i < n; i++) {
-    const root = uf.find(i);
-    if (!compMap.has(root)) compMap.set(root, []);
-    compMap.get(root)!.push(i);
-  }
-  const components = [...compMap.values()].sort((a, b) => b.length - a.length);
-
-  // 永続化
+  // 永続化準備
   const db = kwDb();
   db.transaction(() => {
     db.prepare(`DELETE FROM l3_cluster_members WHERE run_id=?`).run(runId);
     db.prepare(`DELETE FROM l3_clusters WHERE run_id=?`).run(runId);
-
-    const insClu = db.prepare(
-      `INSERT INTO l3_clusters (run_id, cluster_id, representative_kw, size, metric_json, status)
-       VALUES (?, ?, ?, ?, ?, 'active')`,
-    );
-    const insMem = db.prepare(
-      `INSERT INTO l3_cluster_members (run_id, cluster_id, candidate_id, is_representative)
-       VALUES (?, ?, ?, ?)`,
-    );
-
-    for (let idx = 0; idx < components.length; idx++) {
-      const members = components[idx]!;
-      const clusterId = `c_${String(idx + 1).padStart(4, '0')}`;
-      const memberDocs = members.map((mi) => inRegion[mi]!);
-
-      // 代表 = 内部 cosine sum 最大 (近似的中心)
-      let bestIdx = 0;
-      let bestScore = -Infinity;
-      for (let a = 0; a < members.length; a++) {
-        let s = 0;
-        for (let b = 0; b < members.length; b++) {
-          if (a === b) continue;
-          s += cosine(memberDocs[a]!.vector, memberDocs[b]!.vector);
-        }
-        if (s > bestScore) {
-          bestScore = s;
-          bestIdx = a;
-        }
-      }
-      const rep = memberDocs[bestIdx]!;
-      const avgCos =
-        members.length <= 1
-          ? null
-          : bestScore / (members.length - 1);
-
-      insClu.run(
-        runId,
-        clusterId,
-        rep.keyword,
-        members.length,
-        JSON.stringify({ avgCentralCosine: avgCos }),
-      );
-      for (let k = 0; k < memberDocs.length; k++) {
-        insMem.run(runId, clusterId, memberDocs[k]!.candidateId, k === bestIdx ? 1 : 0);
-      }
-    }
   })();
 
-  const singletons = components.filter((c) => c.length === 1).length;
-  const largest = components[0]?.length ?? 0;
+  const insClu = db.prepare(
+    `INSERT INTO l3_clusters (run_id, cluster_id, representative_kw, size, metric_json, status)
+     VALUES (?, ?, ?, ?, ?, 'active')`,
+  );
+  const insMem = db.prepare(
+    `INSERT INTO l3_cluster_members (run_id, cluster_id, candidate_id, is_representative)
+     VALUES (?, ?, ?, ?)`,
+  );
+
+  let clusterCounter = 0;
+  const bucketStats: L3Result['buckets'] = {};
+  // 後でbridge配賦するため、各クラスタの代表ベクトルとidを保持
+  const clusterReps: Array<{ clusterId: string; bucket: string; repVec: Float32Array; size: number }> = [];
+
+  for (const [bucket, members] of byBucket) {
+    const n = members.length;
+    if (n === 0) continue;
+
+    const uf = new UnionFind(n);
+    for (let i = 0; i < n; i++) {
+      for (let j = i + 1; j < n; j++) {
+        let inter = 0;
+        const setI = members[i]!.topUrls;
+        const setJ = members[j]!.topUrls;
+        for (const u of setI) if (setJ.has(u)) inter++;
+        if (inter < th.serpOverlapN) continue;
+        const c = cosine(members[i]!.vector, members[j]!.vector);
+        if (c < th.cosineThreshold) continue;
+        uf.union(i, j);
+      }
+    }
+
+    const compMap = new Map<number, number[]>();
+    for (let i = 0; i < n; i++) {
+      const root = uf.find(i);
+      if (!compMap.has(root)) compMap.set(root, []);
+      compMap.get(root)!.push(i);
+    }
+    const components = [...compMap.values()].sort((a, b) => b.length - a.length);
+
+    db.transaction(() => {
+      for (const comp of components) {
+        clusterCounter++;
+        const clusterId = `c_${String(clusterCounter).padStart(4, '0')}`;
+        const memberDocs = comp.map((mi) => members[mi]!);
+
+        // 代表 = 内部cosine sum最大 (純メンバのみ)
+        let bestIdx = 0;
+        let bestScore = -Infinity;
+        for (let a = 0; a < memberDocs.length; a++) {
+          let s = 0;
+          for (let b = 0; b < memberDocs.length; b++) {
+            if (a === b) continue;
+            s += cosine(memberDocs[a]!.vector, memberDocs[b]!.vector);
+          }
+          if (s > bestScore) {
+            bestScore = s;
+            bestIdx = a;
+          }
+        }
+        const rep = memberDocs[bestIdx]!;
+        const avgCos =
+          memberDocs.length <= 1 ? null : bestScore / (memberDocs.length - 1);
+
+        insClu.run(
+          runId,
+          clusterId,
+          rep.keyword,
+          memberDocs.length,
+          JSON.stringify({ avgCentralCosine: avgCos, bucket }),
+        );
+        for (let k = 0; k < memberDocs.length; k++) {
+          insMem.run(runId, clusterId, memberDocs[k]!.candidateId, k === bestIdx ? 1 : 0);
+        }
+        clusterReps.push({
+          clusterId,
+          bucket,
+          repVec: rep.vector,
+          size: memberDocs.length,
+        });
+      }
+    })();
+
+    const compsSorted = components.sort((a, b) => b.length - a.length);
+    bucketStats[bucket] = {
+      members: n,
+      clusters: components.length,
+      largest: compsSorted[0]?.length ?? 0,
+    };
+  }
+
+  // bridges を最近接クラスタに配賦 (passage相当)
+  let bridgesAssigned = 0;
+  let bridgesUnassigned = 0;
+  if (bridges.length > 0 && clusterReps.length > 0) {
+    db.transaction(() => {
+      for (const br of bridges) {
+        let bestSim = -1;
+        let bestClu: typeof clusterReps[number] | null = null;
+        for (const c of clusterReps) {
+          const s = cosine(br.vector, c.repVec);
+          if (s > bestSim) {
+            bestSim = s;
+            bestClu = c;
+          }
+        }
+        if (bestClu && bestSim >= th.cosineThreshold * 0.85) {
+          // 0.85倍のソフト閾値 (bridge配賦は厳格化しない)
+          insMem.run(runId, bestClu.clusterId, br.candidateId, 0);
+          db.prepare(
+            `UPDATE l3_clusters SET size=size+1 WHERE run_id=? AND cluster_id=?`,
+          ).run(runId, bestClu.clusterId);
+          bridgesAssigned++;
+        } else {
+          bridgesUnassigned++;
+        }
+      }
+    })();
+  } else {
+    bridgesUnassigned = bridges.length;
+  }
+
+  // 最終統計
+  const sizes = (
+    db
+      .prepare(`SELECT size FROM l3_clusters WHERE run_id=? AND status='active'`)
+      .all(runId) as Array<{ size: number }>
+  ).map((r) => r.size);
+  const pages = sizes.filter((s) => s >= 2).length;
+  const singletons = sizes.filter((s) => s === 1).length;
 
   logger.info(
     {
       runId,
       thresholds: { N: th.serpOverlapN, T: th.cosineThreshold },
-      inRegion: n,
-      edges,
-      clusters: components.length,
-      singletons,
-      largest,
+      inRegion: all.length,
+      pureCandidates: pure.length,
+      bridges: bridges.length,
+      bridgesAssigned,
+      bridgesUnassigned,
+      buckets: Object.fromEntries(Object.entries(bucketStats)),
+      clustersTotal: clusterCounter,
     },
-    '[L3] clustering done',
+    '[L3] axis-aware clustering done',
   );
 
   return {
     thresholds: { serpOverlapN: th.serpOverlapN, cosineThreshold: th.cosineThreshold },
-    inRegion: n,
-    edges,
-    clusters: components.length,
+    inRegion: all.length,
+    buckets: bucketStats,
+    bridgesAssigned,
+    bridgesUnassigned,
+    clustersTotal: clusterCounter,
+    pages,
     singletons,
-    largestCluster: largest,
   };
 }

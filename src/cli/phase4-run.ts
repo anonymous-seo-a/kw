@@ -13,7 +13,10 @@ import { setRunStatus } from '../lib/runs.js';
 
 async function main() {
   const { values } = parseArgs({
-    options: { 'run-id': { type: 'string' } },
+    options: {
+      'run-id': { type: 'string' },
+      'skip-axes': { type: 'boolean', default: false },
+    },
   });
   const runId = values['run-id'];
   if (!runId) {
@@ -22,7 +25,7 @@ async function main() {
   }
 
   try {
-    const r = await runPhase4(runId);
+    const r = await runPhase4(runId, { skipAxes: values['skip-axes'] });
     console.log(JSON.stringify({ runId, ...r }, null, 2));
   } catch (e) {
     setRunStatus(runId, 'failed', (e as Error).message);
