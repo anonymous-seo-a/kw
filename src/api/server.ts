@@ -6,6 +6,7 @@ import { logger } from '../lib/logger.js';
 import { healthRouter } from './routes/health.js';
 import { runsRouter } from './routes/runs.js';
 import { candidatesRouter } from './routes/candidates.js';
+import { dashboardRouter } from './routes/dashboard.js';
 
 const app = express();
 app.use(express.json({ limit: '2mb' }));
@@ -13,6 +14,7 @@ app.use(express.json({ limit: '2mb' }));
 app.use('/health', healthRouter);
 app.use('/api/runs', runsRouter);
 app.use('/api/candidates', candidatesRouter);
+app.use('/api/dashboard', dashboardRouter);
 
 const distUi = resolve('dist/ui');
 if (env.NODE_ENV === 'production' && existsSync(distUi)) {
