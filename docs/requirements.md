@@ -62,11 +62,12 @@ INPUT: seed KW（例: "AGA おすすめ"）＋ mode設定
   │
 [L0]  対象定義 ── target=両取り / scope=サイロ全体 / site=greenfield / vertical=medical
   │
-[L1]  候補生成 ── 無料・安価ソースで広く張る（Ahrefsは使わない）
+[L1]  候補生成 ── 多ソースで広く張る（Ahrefsも統合・予算ガード経由）
   ├ GSC実クエリ（無料）
   ├ LLMファンアウト模擬（Google AI Modeのサブクエリ8〜20本を再現）
   ├ SerpAPI（PAA・サジェスト・関連検索）
-  └ エンティティ展開（Google NLP API → Knowledge Graph → 派生クエリ）
+  ├ エンティティ展開（Google NLP API → Knowledge Graph → 派生クエリ）
+  └ Ahrefs Keywords Explorer (matching/related/questions/suggestions) ※rev 2026-05-22
   │
 [L2]  エンリッチ ── 絞り込み後にAhrefs精密（§5 ユニット予算）
   ├ volume / KD / CPC / intent（Ahrefs）
@@ -155,7 +156,11 @@ OUTPUT: §7
 | Voyage（voyage-3-large） | embedding | 共有層・既存 |
 | Claude API | fan-out模擬・intent・コンプラ判定 | 従量 |
 
-**ユニット運用方針**: Ahrefsは**[L1]拡張では使わない**。無料ソースで広げ→[L3]クラスタ生存後の確定対象にだけ[L2]で当てる。Standardプラン想定（月150,000ユニット前後・要実残量確認）で **月10〜30 seed** 規模感。広げるのは無料、確定するのはAhrefs。
+**ユニット運用方針** (rev 2026-05-22): Ahrefsを**[L1]の候補生成にも統合**する。Google単一ソース依存を解消し、ブランド名/地域/情報系などのdimensionを Ahrefs サジェストで拾うため。
+- [L1] では `matching-terms` / `related-terms` / `matching-terms?terms=questions` / `search-suggestions` の4エンドポイントを seed に対して呼ぶ (1 seed ≒ 8,000ユニット見込み)
+- [L2] では確定対象に volume/KD/CPC/intent を当てる (大量消費は引き続き [L3] 生存後)
+- 全コールは `ahrefs_budget` (config `ahrefs_unit_budget_monthly` ・既定 150,000/月) で `assertAvailable()` → `consume()` を通し、超過で自動停止
+- Standardプラン想定で **月10〜30 seed** 規模感を維持（[L1] 8k + [L2] 1-3k ≒ 1 seed あたり <15kユニット）
 
 ---
 
@@ -238,7 +243,7 @@ existing_urls: null     # existingモード時のみ（突合対象）
 
 ## 10. 実装スコープ境界（やらないこと）
 
-- Ahrefsを[L1]拡張で使う（ユニット浪費・禁止）
+- Ahrefsを **予算ガード無し** で使う（必ず `ahrefs_budget` で `assertAvailable()` → `consume()`）※rev 2026-05-22 で [L1] 取込解禁、ただし予算管理は厳守
 - embedding/SERPストアの二重保持（共有層を使う）
 - コンプラ判定の最終可否をツールが下す（フラグ提示まで・判断はDaiki）
 - 法令の曖昧引用（条文・公的URL未確認のまま出力しない）

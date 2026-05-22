@@ -24,6 +24,8 @@ async function main() {
       'skip-fanout': { type: 'boolean', default: false },
       'skip-serp': { type: 'boolean', default: false },
       'skip-nlp': { type: 'boolean', default: false },
+      'skip-ahrefs': { type: 'boolean', default: false },
+      'ahrefs-limit': { type: 'string' },
     },
   });
   const seed = values.seed;
@@ -51,7 +53,9 @@ async function main() {
         fanout: values['skip-fanout'],
         serp: values['skip-serp'],
         nlp: values['skip-nlp'],
+        ahrefs: values['skip-ahrefs'],
       },
+      ahrefsLimit: values['ahrefs-limit'] ? Number(values['ahrefs-limit']) : undefined,
     });
     console.log(JSON.stringify({ runId, ...r }, null, 2));
   } catch (e) {

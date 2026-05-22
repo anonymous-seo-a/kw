@@ -36,3 +36,4 @@ Thumbs.db
 # Test artifacts
 *.tsbuildinfo
 .nyc_output/
+kw.code-workspace

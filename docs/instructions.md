@@ -17,7 +17,7 @@
    - 領域境界の最終確定
    - 真=美ゲートの合否
 4. **制約（やらないこと）**:
-   - Ahrefsを[L1]拡張で使う（ユニット浪費・禁止。Ahrefsは[L2]の絞り込み後のみ）
+   - Ahrefsを **予算ガード無し** で使う（必ず `ahrefs_budget` の `assertAvailable()`→`consume()` 経由）。rev 2026-05-22 で [L1] 取込解禁（matching/related/questions/suggestions）。[L2] は引き続き確定対象のみ。
    - embedding/SERPストアの二重保持（共有データ層を使う）
    - しきい値のハードコード（全てconfig駆動・config tableに保存）
    - コンプラ/真=美の最終可否をツールが下す（フラグ提示のみ）

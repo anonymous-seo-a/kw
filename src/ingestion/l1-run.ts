@@ -1,8 +1,8 @@
 /**
- * [L1] 統合実行: GSC → LLM fanout → SerpAPI (seed + fanout) → Google NLP (seed + fanout)
+ * [L1] 統合実行: GSC → LLM fanout → SerpAPI (seed + fanout) → Google NLP (seed + fanout) → Ahrefs (4 endpoints).
  *
- * Ahrefs は使用しない（仕様: [L1]ではAhrefs禁止）。
- * 並列はせず順に走らせる（API kost抑制 & ログ可読性）。
+ * 仕様revision (2026-05-22): Ahrefsを[L1]に使用可 (詳細は src/lib/ahrefs.ts のコメント参照)。
+ * 並列はせず順に走らせる（API cost抑制 & ログ可読性）。
  */
 import { logger } from '../lib/logger.js';
 import { setRunStatus } from '../lib/runs.js';
@@ -11,19 +11,24 @@ import { ingestGscL1 } from './l1-gsc.js';
 import { ingestFanout } from './l1-fanout.js';
 import { ingestSerpL1 } from './l1-serp.js';
 import { ingestNlpL1 } from './l1-nlp.js';
+import { ingestAhrefsL1 } from './l1-ahrefs.js';
 
 export interface L1RunOptions {
   runId: string;
   seedKw: string;
   vertical?: string | null;
   /** Skips for selective re-run. */
-  skip?: { gsc?: boolean; fanout?: boolean; serp?: boolean; nlp?: boolean };
+  skip?: { gsc?: boolean; fanout?: boolean; serp?: boolean; nlp?: boolean; ahrefs?: boolean };
+  ahrefsLimit?: number;
 }
 
 export async function runL1(opts: L1RunOptions): Promise<{
   candidates: number;
   byProvider: Record<string, number>;
   entitiesTotal: number;
+  ahrefsStats: Record<string, { rows: number; unitsActual: number }>;
+  ahrefsInserted: number;
+  ahrefsUnits: number;
 }> {
   setRunStatus(opts.runId, 'l1');
   const { runId, seedKw, vertical } = opts;
@@ -64,6 +69,20 @@ export async function runL1(opts: L1RunOptions): Promise<{
     entitiesTotal = r.entitiesTotal;
   }
 
+  // 5) Ahrefs Keywords Explorer (4 endpoints) — 仕様revisionで [L1] に統合
+  let ahrefsStats: Record<string, { rows: number; unitsActual: number }> = {};
+  let ahrefsInserted = 0;
+  let ahrefsUnits = 0;
+  if (!skip.ahrefs) {
+    const r = await ingestAhrefsL1(runId, { seedKw, limit: opts.ahrefsLimit ?? 200 });
+    ahrefsStats = r.byEndpoint;
+    ahrefsInserted = r.inserted;
+    ahrefsUnits = r.unitsTotal;
+    if (r.budgetExceeded) {
+      logger.warn({ runId, ...r.budgetExceeded }, '[L1] ahrefs stopped early on budget');
+    }
+  }
+
   // Final counts
   const candidates = (
     kwDb().prepare('SELECT COUNT(*) AS n FROM l1_candidates WHERE run_id=?').get(runId) as {
@@ -84,9 +103,9 @@ export async function runL1(opts: L1RunOptions): Promise<{
   for (const r of byProviderRows) byProvider[r.provider] = r.n;
 
   logger.info(
-    { runId, candidates, byProvider, gscRows, serpStats, entitiesTotal },
+    { runId, candidates, byProvider, gscRows, serpStats, entitiesTotal, ahrefsStats, ahrefsInserted, ahrefsUnits },
     '[L1] complete',
   );
   setRunStatus(opts.runId, 'l1_done');
-  return { candidates, byProvider, entitiesTotal };
+  return { candidates, byProvider, entitiesTotal, ahrefsStats, ahrefsInserted, ahrefsUnits };
 }

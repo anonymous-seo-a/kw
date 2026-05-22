@@ -33,14 +33,17 @@ function pageEntityKeys(
   clusterId: string,
 ): Set<string> {
   const db = kwDb();
+  // 自分のメンバー ∪ 自分に吸収された全クラスタのメンバー
+  // (NEC='passage_absorbed' されたsingletonの中身もページに含める)
   const members = db
     .prepare(
       `SELECT lc.id, lc.keyword
        FROM l3_cluster_members m
        JOIN l1_candidates lc ON lc.id = m.candidate_id
-       WHERE m.run_id=? AND m.cluster_id=?`,
+       LEFT JOIN l3_clusters c ON c.run_id=m.run_id AND c.cluster_id=m.cluster_id
+       WHERE m.run_id=? AND (m.cluster_id=? OR c.absorbed_into=?)`,
     )
-    .all(runId, clusterId) as Array<{ id: number; keyword: string }>;
+    .all(runId, clusterId, clusterId) as Array<{ id: number; keyword: string }>;
 
   const keys = new Set<string>();
   if (members.length === 0) return keys;
