@@ -24,7 +24,8 @@
     "l1:fanout": "tsx src/cli/l1-fanout.ts",
     "l1:gsc": "tsx src/cli/l1-gsc.ts",
     "l1:serp": "tsx src/cli/l1-serp.ts",
-    "l1:nlp": "tsx src/cli/l1-nlp.ts"
+    "l1:nlp": "tsx src/cli/l1-nlp.ts",
+    "l2:run": "tsx src/cli/l2-run.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.0",
