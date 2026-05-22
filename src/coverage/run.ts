@@ -9,6 +9,7 @@ import { logger } from '../lib/logger.js';
 import { runAxisClassification } from '../cluster/axes.js';
 import { normalizeAxisValues } from '../cluster/axes-normalize.js';
 import { runL3 } from '../cluster/l3.js';
+import { runPostL3Merge } from '../cluster/post-merge.js';
 import { fetchL3Metrics } from '../enrichment/l3-metrics.js';
 import { runNec } from '../necessity/nec.js';
 import { applyComplianceFloor } from '../necessity/compliance-floor.js';
@@ -18,6 +19,7 @@ export interface Phase4Result {
   axes: Awaited<ReturnType<typeof runAxisClassification>> | { skipped: true };
   axesNormalize: Awaited<ReturnType<typeof normalizeAxisValues>> | { skipped: true };
   l3: Awaited<ReturnType<typeof runL3>>;
+  postMerge: Awaited<ReturnType<typeof runPostL3Merge>>;
   l3Metrics: Awaited<ReturnType<typeof fetchL3Metrics>> | { skipped: true };
   nec: Awaited<ReturnType<typeof runNec>>;
   compliance: Awaited<ReturnType<typeof applyComplianceFloor>>;
@@ -53,6 +55,8 @@ export async function runPhase4(runId: string, opts: Phase4Options = {}): Promis
     ? ({ skipped: true } as const)
     : await fetchL3Metrics(runId);
   const nec = await runNec(runId);
+  // post-merge は NEC の後に実行 (NECが status='active' に reset するため)
+  const postMerge = await runPostL3Merge(runId);
   const compliance = await applyComplianceFloor(runId);
   const coverage = await runCoverage(runId);
 
@@ -62,12 +66,12 @@ export async function runPhase4(runId: string, opts: Phase4Options = {}): Promis
     eventType: 'phase4.complete',
     entityType: 'run',
     entityId: runId,
-    after: { axes, axesNormalize, l3, l3Metrics, nec, compliance, coverage },
+    after: { axes, axesNormalize, l3, postMerge, l3Metrics, nec, compliance, coverage },
   });
 
   logger.info(
-    { runId, axes, axesNormalize, l3, l3Metrics, nec, compliance, coverage },
+    { runId, axes, axesNormalize, l3, postMerge, l3Metrics, nec, compliance, coverage },
     '[Phase4] complete',
   );
-  return { axes, axesNormalize, l3, l3Metrics, nec, compliance, coverage };
+  return { axes, axesNormalize, l3, postMerge, l3Metrics, nec, compliance, coverage };
 }
