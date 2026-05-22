@@ -31,6 +31,7 @@
     "phase3:run": "tsx src/cli/phase3-run.ts",
     "phase4:run": "tsx src/cli/phase4-run.ts",
     "phase5:run": "tsx src/cli/phase5-run.ts",
+    "phase6:run": "tsx src/cli/phase6-run.ts",
     "config:set": "tsx src/cli/config-set.ts"
   },
   "dependencies": {
