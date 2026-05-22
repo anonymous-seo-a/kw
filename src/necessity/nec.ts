@@ -100,8 +100,12 @@ export async function runNec(runId: string): Promise<NecResult> {
     `UPDATE l3_clusters SET status=?, absorbed_into=? WHERE run_id=? AND cluster_id=?`,
   );
 
-  // 吸収先候補 = size >= 2 かつ sumVolume >= volumeMin の "強い" クラスタ
-  const strongClusters = info.filter((c) => c.size >= 2 && c.sumVolume >= volumeMin && c.repVec);
+  // 吸収先候補 = size >= 2 かつ sumVolume >= volumeMin の "強い" クラスタ。
+  // brand bucket cluster は吸収「先」になれない (=brand同士の cyclic absorption 防止。
+  // brand cluster は必ず非brand strong cluster に吸収される)
+  const strongClusters = info.filter(
+    (c) => c.size >= 2 && c.sumVolume >= volumeMin && c.repVec && !c.isBrand,
+  );
 
   let pages = 0;
   let absorbed = 0;
