@@ -243,27 +243,58 @@ export async function runL3(runId: string): Promise<L3Result> {
     };
   }
 
-  // bridges を最近接クラスタに配賦 (passage相当)
+  // bridges を最近接クラスタに配賦 (passage相当).
+  // 仕様§4 rev: bridge は自分の軸 (1+) に一致する bucket を優先 (axis-match preference).
+  //   同軸バケット内 max-cosine → 全体 max-cosine の順で fallback.
   let bridgesAssigned = 0;
   let bridgesUnassigned = 0;
   if (bridges.length > 0 && clusterReps.length > 0) {
+    // bridge ごとの所属 bucket 集合をロード
+    const bridgeAxesStmt = kwDb().prepare(
+      `SELECT axis, axis_value FROM candidate_axes WHERE candidate_id=?`,
+    );
+    const bridgeBuckets = new Map<number, Set<string>>();
+    for (const br of bridges) {
+      const rows = bridgeAxesStmt.all(br.candidateId) as Array<{
+        axis: string;
+        axis_value: string;
+      }>;
+      const set = new Set<string>();
+      for (const r of rows) set.add(`${r.axis}:${r.axis_value}`);
+      bridgeBuckets.set(br.candidateId, set);
+    }
     db.transaction(() => {
       for (const br of bridges) {
-        let bestSim = -1;
-        let bestClu: typeof clusterReps[number] | null = null;
+        const myBuckets = bridgeBuckets.get(br.candidateId) ?? new Set<string>();
+        let bestMatchSim = -1;
+        let bestMatchClu: typeof clusterReps[number] | null = null;
+        let bestAnySim = -1;
+        let bestAnyClu: typeof clusterReps[number] | null = null;
         for (const c of clusterReps) {
           const s = cosine(br.vector, c.repVec);
-          if (s > bestSim) {
-            bestSim = s;
-            bestClu = c;
+          if (myBuckets.has(c.bucket)) {
+            if (s > bestMatchSim) {
+              bestMatchSim = s;
+              bestMatchClu = c;
+            }
+          }
+          if (s > bestAnySim) {
+            bestAnySim = s;
+            bestAnyClu = c;
           }
         }
-        if (bestClu && bestSim >= th.cosineThreshold * 0.85) {
-          // 0.85倍のソフト閾値 (bridge配賦は厳格化しない)
-          insMem.run(runId, bestClu.clusterId, br.candidateId, 0);
+        const softTh = th.cosineThreshold * 0.85;
+        const target =
+          bestMatchClu && bestMatchSim >= softTh
+            ? bestMatchClu
+            : bestAnyClu && bestAnySim >= softTh
+              ? bestAnyClu
+              : null;
+        if (target) {
+          insMem.run(runId, target.clusterId, br.candidateId, 0);
           db.prepare(
             `UPDATE l3_clusters SET size=size+1 WHERE run_id=? AND cluster_id=?`,
-          ).run(runId, bestClu.clusterId);
+          ).run(runId, target.clusterId);
           bridgesAssigned++;
         } else {
           bridgesUnassigned++;

@@ -17,6 +17,7 @@ async function main() {
       'run-id': { type: 'string' },
       'skip-axes': { type: 'boolean', default: false },
       'skip-normalize': { type: 'boolean', default: false },
+      'skip-metrics': { type: 'boolean', default: false },
     },
   });
   const runId = values['run-id'];
@@ -29,6 +30,7 @@ async function main() {
     const r = await runPhase4(runId, {
       skipAxes: values['skip-axes'],
       skipNormalize: values['skip-normalize'],
+      skipMetrics: values['skip-metrics'],
     });
     console.log(JSON.stringify({ runId, ...r }, null, 2));
   } catch (e) {

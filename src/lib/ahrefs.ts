@@ -28,7 +28,8 @@ export type AhrefsEndpointKind =
   | 'matching-terms'
   | 'related-terms'
   | 'matching-terms-questions'   // matching-terms with terms=questions filter
-  | 'search-suggestions';
+  | 'search-suggestions'
+  | 'overview';                   // 既知keywordsのmetrics取得 (バッチKW対応)
 
 interface CallOptions {
   endpoint: AhrefsEndpointKind;
@@ -50,6 +51,7 @@ const PATH_MAP: Record<AhrefsEndpointKind, { path: string; extraParams: Record<s
     extraParams: { terms: 'questions' },
   },
   'search-suggestions': { path: 'keywords-explorer/search-suggestions', extraParams: {} },
+  overview: { path: 'keywords-explorer/overview', extraParams: {} },
 };
 
 const DEFAULT_SELECT = ['keyword', 'volume', 'difficulty', 'cpc', 'intents'];
@@ -128,6 +130,33 @@ export async function callAhrefs(opts: CallOptions): Promise<AhrefsCallResult> {
   });
 
   return { endpoint: opts.endpoint, rows, unitsEstimated: estimate, unitsActual };
+}
+
+/**
+ * 既知keywordsのmetrics一括取得 (volume/difficulty/cpc/intents). Ahrefs overview endpoint.
+ * keywordsはcomma-separated。1コールで複数語可。
+ */
+export async function ahrefsOverviewBatch(opts: {
+  keywords: string[];
+  country?: string;
+  searchEngine?: string;
+  select?: string[];
+  runId?: string;
+  assertBudget?: boolean;
+}): Promise<AhrefsCallResult> {
+  if (opts.keywords.length === 0) {
+    return { endpoint: 'overview', rows: [], unitsEstimated: 0, unitsActual: 0 };
+  }
+  return callAhrefs({
+    endpoint: 'overview',
+    keyword: opts.keywords.join(','),
+    country: opts.country,
+    searchEngine: opts.searchEngine,
+    select: opts.select,
+    limit: opts.keywords.length,
+    runId: opts.runId,
+    assertBudget: opts.assertBudget,
+  });
 }
 
 export { BudgetExceededError };

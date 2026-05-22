@@ -45,6 +45,7 @@ const PROVIDER_NAME: Record<AhrefsEndpointKind, string> = {
   'related-terms': 'ahrefs_related_terms',
   'matching-terms-questions': 'ahrefs_questions',
   'search-suggestions': 'ahrefs_search_suggestions',
+  overview: 'ahrefs_overview', // L1では未使用 (L3生存後のmetrics取得用)
 };
 
 export async function ingestAhrefsL1(

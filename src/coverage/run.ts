@@ -9,6 +9,7 @@ import { logger } from '../lib/logger.js';
 import { runAxisClassification } from '../cluster/axes.js';
 import { normalizeAxisValues } from '../cluster/axes-normalize.js';
 import { runL3 } from '../cluster/l3.js';
+import { fetchL3Metrics } from '../enrichment/l3-metrics.js';
 import { runNec } from '../necessity/nec.js';
 import { applyComplianceFloor } from '../necessity/compliance-floor.js';
 import { runCoverage } from './setcover.js';
@@ -17,6 +18,7 @@ export interface Phase4Result {
   axes: Awaited<ReturnType<typeof runAxisClassification>> | { skipped: true };
   axesNormalize: Awaited<ReturnType<typeof normalizeAxisValues>> | { skipped: true };
   l3: Awaited<ReturnType<typeof runL3>>;
+  l3Metrics: Awaited<ReturnType<typeof fetchL3Metrics>> | { skipped: true };
   nec: Awaited<ReturnType<typeof runNec>>;
   compliance: Awaited<ReturnType<typeof applyComplianceFloor>>;
   coverage: Awaited<ReturnType<typeof runCoverage>>;
@@ -27,6 +29,8 @@ export interface Phase4Options {
   skipAxes?: boolean;
   /** Skip axis-value normalization. Default false. */
   skipNormalize?: boolean;
+  /** Skip L3-metrics Ahrefs fetch. Default false. */
+  skipMetrics?: boolean;
 }
 
 export async function runPhase4(runId: string, opts: Phase4Options = {}): Promise<Phase4Result> {
@@ -45,6 +49,9 @@ export async function runPhase4(runId: string, opts: Phase4Options = {}): Promis
     ? ({ skipped: true } as const)
     : await normalizeAxisValues(runId);
   const l3 = await runL3(runId);
+  const l3Metrics = opts.skipMetrics
+    ? ({ skipped: true } as const)
+    : await fetchL3Metrics(runId);
   const nec = await runNec(runId);
   const compliance = await applyComplianceFloor(runId);
   const coverage = await runCoverage(runId);
@@ -55,9 +62,12 @@ export async function runPhase4(runId: string, opts: Phase4Options = {}): Promis
     eventType: 'phase4.complete',
     entityType: 'run',
     entityId: runId,
-    after: { axes, axesNormalize, l3, nec, compliance, coverage },
+    after: { axes, axesNormalize, l3, l3Metrics, nec, compliance, coverage },
   });
 
-  logger.info({ runId, axes, axesNormalize, l3, nec, compliance, coverage }, '[Phase4] complete');
-  return { axes, axesNormalize, l3, nec, compliance, coverage };
+  logger.info(
+    { runId, axes, axesNormalize, l3, l3Metrics, nec, compliance, coverage },
+    '[Phase4] complete',
+  );
+  return { axes, axesNormalize, l3, l3Metrics, nec, compliance, coverage };
 }
