@@ -8,6 +8,7 @@ import { audit } from '../lib/audit.js';
 import { logger } from '../lib/logger.js';
 import { runAxisClassification } from '../cluster/axes.js';
 import { normalizeAxisValues } from '../cluster/axes-normalize.js';
+import { runIntentFilters } from '../cluster/intent-filters.js';
 import { runL3 } from '../cluster/l3.js';
 import { runPostL3Merge } from '../cluster/post-merge.js';
 import { fetchL3Metrics } from '../enrichment/l3-metrics.js';
@@ -18,6 +19,7 @@ import { runCoverage } from './setcover.js';
 export interface Phase4Result {
   axes: Awaited<ReturnType<typeof runAxisClassification>> | { skipped: true };
   axesNormalize: Awaited<ReturnType<typeof normalizeAxisValues>> | { skipped: true };
+  intentFilters: Awaited<ReturnType<typeof runIntentFilters>>;
   l3: Awaited<ReturnType<typeof runL3>>;
   postMerge: Awaited<ReturnType<typeof runPostL3Merge>>;
   l3Metrics: Awaited<ReturnType<typeof fetchL3Metrics>> | { skipped: true };
@@ -50,6 +52,7 @@ export async function runPhase4(runId: string, opts: Phase4Options = {}): Promis
   const axesNormalize = opts.skipNormalize
     ? ({ skipped: true } as const)
     : await normalizeAxisValues(runId);
+  const intentFilters = await runIntentFilters(runId);
   const l3 = await runL3(runId);
   const l3Metrics = opts.skipMetrics
     ? ({ skipped: true } as const)
@@ -66,12 +69,12 @@ export async function runPhase4(runId: string, opts: Phase4Options = {}): Promis
     eventType: 'phase4.complete',
     entityType: 'run',
     entityId: runId,
-    after: { axes, axesNormalize, l3, postMerge, l3Metrics, nec, compliance, coverage },
+    after: { axes, axesNormalize, intentFilters, l3, postMerge, l3Metrics, nec, compliance, coverage },
   });
 
   logger.info(
-    { runId, axes, axesNormalize, l3, postMerge, l3Metrics, nec, compliance, coverage },
+    { runId, axes, axesNormalize, intentFilters, l3, postMerge, l3Metrics, nec, compliance, coverage },
     '[Phase4] complete',
   );
-  return { axes, axesNormalize, l3, postMerge, l3Metrics, nec, compliance, coverage };
+  return { axes, axesNormalize, intentFilters, l3, postMerge, l3Metrics, nec, compliance, coverage };
 }

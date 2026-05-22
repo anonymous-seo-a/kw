@@ -84,22 +84,29 @@ export function buildPageMembersRows(runId: string): Row[] {
   const db = kwDb();
   // page_bucket は **page levelの軸** (吸収先 cluster の bucket)。
   // member 元クラスタの bucket は使わない (同一page内で値が散らかるため)。
+  // candidate_filters に該当する候補は page_id='(excluded:<kind>)' として明示。
   const rows = db
     .prepare(
       `SELECT
-         COALESCE(cp.page_id, '(unassigned)') AS page_id,
-         COALESCE(cp.title_hint, '') AS axis_kw,
-         COALESCE(json_extract(page_c.metric_json,'$.bucket'), '') AS bucket,
+         CASE WHEN cf.candidate_id IS NOT NULL THEN '(excluded:' || cf.filter_kind || ')'
+              ELSE COALESCE(cp.page_id, '(unassigned)') END AS page_id,
+         CASE WHEN cf.candidate_id IS NOT NULL THEN ''
+              ELSE COALESCE(cp.title_hint, '') END AS axis_kw,
+         CASE WHEN cf.candidate_id IS NOT NULL THEN ''
+              ELSE COALESCE(json_extract(page_c.metric_json,'$.bucket'), '') END AS bucket,
          COALESCE(il.layer, '') AS intent_layer,
          COALESCE(cp.cover_size, 0) AS page_cover_size,
          pr.score AS pagerank,
          lc.keyword AS member_kw,
-         CASE WHEN m.is_representative=1 AND m.cluster_id = cp.cluster_id THEN 1 ELSE 0 END AS is_representative,
+         CASE WHEN cf.candidate_id IS NOT NULL THEN 0
+              WHEN m.is_representative=1 AND m.cluster_id = cp.cluster_id THEN 1
+              ELSE 0 END AS is_representative,
          metrics.volume,
          metrics.kd,
          metrics.cpc,
          metrics.intent
        FROM l1_candidates lc
+       LEFT JOIN candidate_filters cf ON cf.run_id=lc.run_id AND cf.candidate_id=lc.id
        LEFT JOIN l3_cluster_members m ON m.run_id=lc.run_id AND m.candidate_id=lc.id
        LEFT JOIN l3_clusters c ON c.run_id=lc.run_id AND c.cluster_id=m.cluster_id
        LEFT JOIN cov_pages cp ON cp.run_id=lc.run_id AND cp.cluster_id=COALESCE(c.absorbed_into, c.cluster_id)

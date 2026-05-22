@@ -75,7 +75,18 @@ function loadInRegion(runId: string): InRegionCand[] {
   );
   if (inRegionIds.size === 0) return [];
 
-  const vectors = loadRunVectors(runId).filter((v) => inRegionIds.has(v.candidateId));
+  // 意図フィルタで除外された候補は L3 clustering 対象外
+  const filteredIds = new Set(
+    (
+      kwDb()
+        .prepare(`SELECT candidate_id FROM candidate_filters WHERE run_id=?`)
+        .all(runId) as Array<{ candidate_id: number }>
+    ).map((r) => r.candidate_id),
+  );
+
+  const vectors = loadRunVectors(runId).filter(
+    (v) => inRegionIds.has(v.candidateId) && !filteredIds.has(v.candidateId),
+  );
   const fpRows = kwDb()
     .prepare(
       `SELECT lf.candidate_id, lf.cache_key
