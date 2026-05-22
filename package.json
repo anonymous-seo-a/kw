@@ -29,6 +29,7 @@
     "phase3:calibrate": "tsx src/cli/phase3-calibrate.ts",
     "phase3:run": "tsx src/cli/phase3-run.ts",
     "phase4:run": "tsx src/cli/phase4-run.ts",
+    "phase5:run": "tsx src/cli/phase5-run.ts",
     "config:set": "tsx src/cli/config-set.ts"
   },
   "dependencies": {
