@@ -69,6 +69,7 @@ export async function runNec(runId: string): Promise<NecResult> {
     sumVolume: number;
     volumeRows: number;
     isBrand: boolean;
+    bucket: string;
   };
   const info: ClusterInfo[] = clusters.map((c) => {
     const rep = db
@@ -86,6 +87,7 @@ export async function runNec(runId: string): Promise<NecResult> {
       sumVolume: vRow.sum_vol ?? 0,
       volumeRows: vRow.volume_rows ?? 0,
       isBrand: (c.bucket ?? '').startsWith('brand:'),
+      bucket: c.bucket ?? '',
     };
   });
 
@@ -256,15 +258,25 @@ export async function runNec(runId: string): Promise<NecResult> {
   };
 }
 
+/**
+ * 吸収先選択ルール:
+ *   1) 同一 bucket の strong cluster がいれば最近接を選ぶ
+ *   2) いなければ null を返す (cross-bucket absorption は禁止)
+ *
+ * 理由: 「aga さいたま市 おすすめ」 (location:さいたま市) singleton が
+ *      最近接の「東京 aga おすすめ」 (location:東京) に流れ込む現象を防ぐ。
+ *      "同じバケット" = 同じ軸 + 同じ canonical 値 のみ吸収可。
+ */
 function pickNearestStrong(
-  c: { id: string; repVec: Float32Array | null },
-  strong: Array<{ id: string; repVec: Float32Array | null }>,
+  c: { id: string; repVec: Float32Array | null; bucket: string },
+  strong: Array<{ id: string; repVec: Float32Array | null; bucket: string }>,
 ): { id: string; sim: number } | null {
   if (!c.repVec) return null;
   let bestId: string | null = null;
   let bestSim = -1;
   for (const s of strong) {
     if (s.id === c.id || !s.repVec) continue;
+    if (s.bucket !== c.bucket) continue; // ← 同一バケットのみ
     const sim = cosine(c.repVec, s.repVec);
     if (sim > bestSim) {
       bestSim = sim;
