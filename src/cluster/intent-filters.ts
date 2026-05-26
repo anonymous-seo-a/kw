@@ -2,18 +2,13 @@
  * 意図フィルタ: SEO記事化しないKWを除外する仕組み。
  *
  *  - forum_qa: 知恵袋 / 2ch / 5ch / 掲示板 / なんJ / まとめサイト 等
- *    (ユーザが「フォーラム/Q&Aサイトを探す」意図でありメディア記事の対象外)
- *  - brand: 競合ブランド名を含むKW (brand軸付与済の候補)
- *    (自社siloは競合brand+modifierをtargetしない。inventoryには残るがpageには出さない)
+ *  - brand: 競合ブランド名を含むKW (brand軸付与済 + rule augmentation)
+ *  - noise_location (spec-01): cover≤1 + rep_vol=0 の location sub page候補
+ *    → 別関数 markNoiseLocationFilters() で page 化前にmarkする
  *
  * 設定:
  *   config 'intent_filter_forum_qa_patterns' (string[]) で patterns を上書き可。
- *
- * 効果:
- *   - candidate_filters に記録 (kind='forum_qa' | 'brand')
- *   - L3 loadInRegion() がfilteredを除外 → 任意cluster member にならない
- *   - COV: page coverage に含まれない (kw:候補は inventory にあるが page_id=NULL)
- *   - UI: 「除外KW」セクションに別表示
+ *   config 'spec01_noise_cover_max' (default 1) で noise 閾値設定。
  */
 import { kwDb } from '../lib/db.js';
 import { getConfigOr } from '../lib/config.js';

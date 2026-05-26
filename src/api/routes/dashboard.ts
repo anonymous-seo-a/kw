@@ -10,7 +10,7 @@
  */
 import { Router } from 'express';
 import { kwDb } from '../../lib/db.js';
-import { buildPageMembersCsv, groupByPage } from '../../export/csv.js';
+import { buildPageMembersCsv, groupByPage, buildPagesCsv, buildPageRows } from '../../export/csv.js';
 
 export const dashboardRouter = Router();
 
@@ -217,9 +217,9 @@ dashboardRouter.get('/:runId/truebeauty', (req, res) => {
   });
 });
 
-// CSV出力 (軸KW → 配下記事KW)
+// CSV出力 — spec-01修正D 1page=1row
 dashboardRouter.get('/:runId/csv', (req, res) => {
-  const { csv, rowCount } = buildPageMembersCsv(req.params.runId);
+  const { csv, rowCount } = buildPagesCsv(req.params.runId);
   res.setHeader('Content-Type', 'text/csv; charset=utf-8');
   res.setHeader(
     'Content-Disposition',
@@ -227,6 +227,18 @@ dashboardRouter.get('/:runId/csv', (req, res) => {
   );
   res.setHeader('X-Row-Count', String(rowCount));
   res.send(csv);
+});
+
+// theme→page→member の階層 view 用
+dashboardRouter.get('/:runId/themes', (req, res) => {
+  const db = kwDb();
+  const themes = db
+    .prepare(
+      `SELECT theme_id, theme_name, rationale, page_count FROM themes WHERE run_id=? ORDER BY page_count DESC`,
+    )
+    .all(req.params.runId);
+  const pages = buildPageRows(req.params.runId);
+  res.json({ themes, pages });
 });
 
 // 階層view: page単位の配下記事KW (UIで「軸KW → 配下記事KW」一覧)

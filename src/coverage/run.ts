@@ -10,25 +10,31 @@ import { runAxisClassification } from '../cluster/axes.js';
 import { normalizeAxisValues } from '../cluster/axes-normalize.js';
 import { runIntentFilters } from '../cluster/intent-filters.js';
 import { runLocationHierarchy } from '../cluster/location-hierarchy.js';
+import { runLocationNormalize } from '../cluster/location-normalize.js';
 import { runL3 } from '../cluster/l3.js';
-// post-merge は現状 disable (狭く深く志向)。将来再有効化するなら src/cluster/post-merge.ts を import 復活。
-// import { runPostL3Merge } from '../cluster/post-merge.js';
 import { fetchL3Metrics } from '../enrichment/l3-metrics.js';
 import { runNec } from '../necessity/nec.js';
+import { runPageMergeSerp } from '../cluster/page-merge-serp.js';
+import { runNoiseFilter } from '../cluster/noise-filter.js';
+import { runThemeDerive } from '../cluster/theme-derive.js';
 import { applyComplianceFloor } from '../necessity/compliance-floor.js';
 import { runCoverage } from './setcover.js';
 
 export interface Phase4Result {
   axes: Awaited<ReturnType<typeof runAxisClassification>> | { skipped: true };
   axesNormalize: Awaited<ReturnType<typeof normalizeAxisValues>> | { skipped: true };
+  locationNormalize: Awaited<ReturnType<typeof runLocationNormalize>> | { skipped: true };
   intentFilters: Awaited<ReturnType<typeof runIntentFilters>>;
   locationHierarchy: Awaited<ReturnType<typeof runLocationHierarchy>> | { skipped: true };
   l3: Awaited<ReturnType<typeof runL3>>;
-  postMerge: { evaluatedPairs: number; merged: number; samples: unknown[] };
   l3Metrics: Awaited<ReturnType<typeof fetchL3Metrics>> | { skipped: true };
   nec: Awaited<ReturnType<typeof runNec>>;
   compliance: Awaited<ReturnType<typeof applyComplianceFloor>>;
   coverage: Awaited<ReturnType<typeof runCoverage>>;
+  pageMergeSerp: Awaited<ReturnType<typeof runPageMergeSerp>>;
+  noiseFilter: Awaited<ReturnType<typeof runNoiseFilter>>;
+  coverage2: Awaited<ReturnType<typeof runCoverage>>;
+  themeDerive: Awaited<ReturnType<typeof runThemeDerive>>;
 }
 
 export interface Phase4Options {
@@ -40,6 +46,8 @@ export interface Phase4Options {
   skipMetrics?: boolean;
   /** Skip Claude-driven location hierarchy classification. Default false. */
   skipLocationHierarchy?: boolean;
+  /** Skip location 表記ゆれ正規化 (spec-01 修正C-1). Default false. */
+  skipLocationNormalize?: boolean;
 }
 
 export async function runPhase4(runId: string, opts: Phase4Options = {}): Promise<Phase4Result> {
@@ -57,6 +65,10 @@ export async function runPhase4(runId: string, opts: Phase4Options = {}): Promis
   const axesNormalize = opts.skipNormalize
     ? ({ skipped: true } as const)
     : await normalizeAxisValues(runId);
+  // 修正C-1 (spec-01): location 表記ゆれ正規化 (axes-normalize後・filter前)
+  const locationNormalize = opts.skipLocationNormalize
+    ? ({ skipped: true } as const)
+    : await runLocationNormalize(runId);
   const intentFilters = await runIntentFilters(runId);
   const locationHierarchy = opts.skipLocationHierarchy
     ? ({ skipped: true } as const)
@@ -66,12 +78,18 @@ export async function runPhase4(runId: string, opts: Phase4Options = {}): Promis
     ? ({ skipped: true } as const)
     : await fetchL3Metrics(runId);
   const nec = await runNec(runId);
-  // post-merge は無効化。アフィリエイトメディア「狭く深く」志向では bucket境界を厳守し、
-  // 軸を跨ぐ自動 merge は意図混在を生むため不採用。
-  // 汎用 format (クリニック/病院/医院/専門クリニック) は axes-normalize で core に降格済。
-  const postMerge = { evaluatedPairs: 0, merged: 0, samples: [] };
   const compliance = await applyComplianceFloor(runId);
+  // 1st pass coverage (NEC直後・page列挙が必要なため)
   const coverage = await runCoverage(runId);
+
+  // 修正B (spec-01): cross-bucket SERP page merge (N=3 by default config)
+  const pageMergeSerp = await runPageMergeSerp(runId);
+  // 修正C-2 (spec-01): noise location pages を nec_decisions='noise_excluded' に
+  const noiseFilter = await runNoiseFilter(runId);
+  // 2nd pass coverage (merge + noise filter 後の最終 cov_pages)
+  const coverage2 = await runCoverage(runId);
+  // 修正A (spec-01): theme (軸) 導出 — Claude命名 8-12 themes
+  const themeDerive = await runThemeDerive(runId);
 
   setRunStatus(runId, 'phase4_done');
   audit({
@@ -79,12 +97,24 @@ export async function runPhase4(runId: string, opts: Phase4Options = {}): Promis
     eventType: 'phase4.complete',
     entityType: 'run',
     entityId: runId,
-    after: { axes, axesNormalize, intentFilters, locationHierarchy, l3, postMerge, l3Metrics, nec, compliance, coverage },
+    after: {
+      axes, axesNormalize, locationNormalize, intentFilters, locationHierarchy, l3,
+      l3Metrics, nec, compliance, coverage,
+      pageMergeSerp, noiseFilter, coverage2, themeDerive,
+    },
   });
 
   logger.info(
-    { runId, axes, axesNormalize, intentFilters, locationHierarchy, l3, postMerge, l3Metrics, nec, compliance, coverage },
+    {
+      runId, axes, axesNormalize, locationNormalize, intentFilters, locationHierarchy, l3,
+      l3Metrics, nec, compliance, coverage,
+      pageMergeSerp, noiseFilter, coverage2, themeDerive,
+    },
     '[Phase4] complete',
   );
-  return { axes, axesNormalize, intentFilters, locationHierarchy, l3, postMerge, l3Metrics, nec, compliance, coverage };
+  return {
+    axes, axesNormalize, locationNormalize, intentFilters, locationHierarchy, l3,
+    l3Metrics, nec, compliance, coverage,
+    pageMergeSerp, noiseFilter, coverage2, themeDerive,
+  };
 }

@@ -33,6 +33,7 @@
     "phase5:run": "tsx src/cli/phase5-run.ts",
     "phase6:run": "tsx src/cli/phase6-run.ts",
     "export:csv": "tsx src/cli/export-csv.ts",
+    "spec01:analyze": "tsx src/cli/spec01-analyze.ts",
     "config:set": "tsx src/cli/config-set.ts"
   },
   "dependencies": {

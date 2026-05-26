@@ -1,0 +1,1676 @@
+{
+  "runId": "r_mpgb2mdk_8b74227f",
+  "pagesAnalyzed": 183,
+  "totalPairs": 16653,
+  "histogram": [
+    16246,
+    227,
+    86,
+    34,
+    20,
+    7,
+    9,
+    13,
+    4,
+    6,
+    1
+  ],
+  "atLeast": [
+    16653,
+    407,
+    180,
+    94,
+    60,
+    40,
+    33,
+    24,
+    11,
+    7,
+    1
+  ],
+  "thresholdResults": [
+    {
+      "n": 2,
+      "resultPages": 100,
+      "reduction": 83,
+      "topGroups": [
+        {
+          "size": 27,
+          "rep_kw": "aga おすすめクリニック",
+          "sample": [
+            "aga おすすめクリニック",
+            "aga治療 オンライン おすすめ",
+            "aga治療 安い",
+            "aga治療ランキング",
+            "AGA 皮膚科 おすすめ"
+          ]
+        },
+        {
+          "size": 20,
+          "rep_kw": "aga 治療 効果",
+          "sample": [
+            "aga 治療 効果",
+            "aga 治療薬 市販",
+            "aga治療 効果 いつから",
+            "aga 治療 薬",
+            "aga対策 効果"
+          ]
+        },
+        {
+          "size": 5,
+          "rep_kw": "aga治療 大宮 おすすめ",
+          "sample": [
+            "aga治療 大宮 おすすめ",
+            "aga 治療 埼玉 おすすめ",
+            "agaクリニック 川口 おすすめ",
+            "aga さいたま市 おすすめ",
+            "aga 浦和 おすすめ"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 3,
+      "resultPages": 126,
+      "reduction": 57,
+      "topGroups": [
+        {
+          "size": 14,
+          "rep_kw": "aga 治療 効果",
+          "sample": [
+            "aga 治療 効果",
+            "aga 治療薬 市販",
+            "aga 治療 薬",
+            "aga対策 効果",
+            "発毛剤 種類"
+          ]
+        },
+        {
+          "size": 6,
+          "rep_kw": "aga おすすめクリニック",
+          "sample": [
+            "aga おすすめクリニック",
+            "aga治療 オンライン おすすめ",
+            "aga治療ランキング",
+            "aga治療 おすすめ(男性)",
+            "agaクリニック 20代 おすすめ"
+          ]
+        },
+        {
+          "size": 6,
+          "rep_kw": "agaクリニック おすすめ 大阪",
+          "sample": [
+            "agaクリニック おすすめ 大阪",
+            "aga 治療 おすすめ 梅田",
+            "agaクリニック 難波 おすすめ",
+            "茶屋町 agaクリニック おすすめ",
+            "agaクリニック 西梅田 おすすめ"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 4,
+      "resultPages": 141,
+      "reduction": 42,
+      "topGroups": [
+        {
+          "size": 10,
+          "rep_kw": "aga 治療薬 市販",
+          "sample": [
+            "aga 治療薬 市販",
+            "aga 治療 薬",
+            "発毛剤 種類",
+            "aga育毛剤",
+            "aga 治療薬"
+          ]
+        },
+        {
+          "size": 5,
+          "rep_kw": "agaクリニック おすすめ 大阪",
+          "sample": [
+            "agaクリニック おすすめ 大阪",
+            "aga 治療 おすすめ 梅田",
+            "茶屋町 agaクリニック おすすめ",
+            "agaクリニック 西梅田 おすすめ",
+            "agaクリニック 大阪梅田 おすすめ"
+          ]
+        },
+        {
+          "size": 4,
+          "rep_kw": "aga 治療 名古屋 おすすめ",
+          "sample": [
+            "aga 治療 名古屋 おすすめ",
+            "名駅周辺 agaクリニック おすすめ",
+            "agaクリニック 愛知 おすすめ",
+            "agaクリニック 栄 おすすめ"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 5,
+      "resultPages": 154,
+      "reduction": 29,
+      "topGroups": [
+        {
+          "size": 4,
+          "rep_kw": "agaクリニック おすすめ 大阪",
+          "sample": [
+            "agaクリニック おすすめ 大阪",
+            "aga 治療 おすすめ 梅田",
+            "茶屋町 agaクリニック おすすめ",
+            "agaクリニック 大阪梅田 おすすめ"
+          ]
+        },
+        {
+          "size": 4,
+          "rep_kw": "aga 治療 薬",
+          "sample": [
+            "aga 治療 薬",
+            "aga 治療薬",
+            "ハゲ 治療薬",
+            "aga 処方薬"
+          ]
+        },
+        {
+          "size": 4,
+          "rep_kw": "aga 治療 名古屋 おすすめ",
+          "sample": [
+            "aga 治療 名古屋 おすすめ",
+            "名駅周辺 agaクリニック おすすめ",
+            "agaクリニック 愛知 おすすめ",
+            "agaクリニック 栄 おすすめ"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 6,
+      "resultPages": 158,
+      "reduction": 25,
+      "topGroups": [
+        {
+          "size": 4,
+          "rep_kw": "agaクリニック おすすめ 大阪",
+          "sample": [
+            "agaクリニック おすすめ 大阪",
+            "aga 治療 おすすめ 梅田",
+            "茶屋町 agaクリニック おすすめ",
+            "agaクリニック 大阪梅田 おすすめ"
+          ]
+        },
+        {
+          "size": 4,
+          "rep_kw": "aga 治療 薬",
+          "sample": [
+            "aga 治療 薬",
+            "aga 治療薬",
+            "ハゲ 治療薬",
+            "aga 処方薬"
+          ]
+        },
+        {
+          "size": 3,
+          "rep_kw": "agaクリニックおすすめ 東京",
+          "sample": [
+            "agaクリニックおすすめ 東京",
+            "東京都 aga治療 おすすめ",
+            "aga 治療 都内 おすすめ"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 7,
+      "resultPages": 164,
+      "reduction": 19,
+      "topGroups": [
+        {
+          "size": 4,
+          "rep_kw": "aga 治療 薬",
+          "sample": [
+            "aga 治療 薬",
+            "aga 治療薬",
+            "ハゲ 治療薬",
+            "aga 処方薬"
+          ]
+        },
+        {
+          "size": 3,
+          "rep_kw": "agaクリニックおすすめ 東京",
+          "sample": [
+            "agaクリニックおすすめ 東京",
+            "東京都 aga治療 おすすめ",
+            "aga 治療 都内 おすすめ"
+          ]
+        },
+        {
+          "size": 3,
+          "rep_kw": "福岡 aga治療 おすすめ",
+          "sample": [
+            "福岡 aga治療 おすすめ",
+            "aga 天神 おすすめ",
+            "福岡市 aga おすすめ"
+          ]
+        }
+      ]
+    },
+    {
+      "n": 8,
+      "resultPages": 174,
+      "reduction": 9,
+      "topGroups": [
+        {
+          "size": 3,
+          "rep_kw": "agaクリニックおすすめ 東京",
+          "sample": [
+            "agaクリニックおすすめ 東京",
+            "東京都 aga治療 おすすめ",
+            "aga 治療 都内 おすすめ"
+          ]
+        },
+        {
+          "size": 3,
+          "rep_kw": "aga 治療 薬",
+          "sample": [
+            "aga 治療 薬",
+            "aga 治療薬",
+            "aga 処方薬"
+          ]
+        },
+        {
+          "size": 3,
+          "rep_kw": "福岡 aga治療 おすすめ",
+          "sample": [
+            "福岡 aga治療 おすすめ",
+            "aga 天神 おすすめ",
+            "福岡市 aga おすすめ"
+          ]
+        }
+      ]
+    }
+  ],
+  "regionMergeCandidates": [
+    {
+      "parent": "東京",
+      "pages": [
+        {
+          "value": "東京",
+          "rep_kw": "agaクリニックおすすめ 東京",
+          "cover": 25,
+          "rep_vol": 10,
+          "overlap_with_parent": null
+        },
+        {
+          "value": "東京 新宿",
+          "rep_kw": "aga 東京 クリニック 新宿",
+          "cover": 15,
+          "rep_vol": 0,
+          "overlap_with_parent": 1
+        },
+        {
+          "value": "町田",
+          "rep_kw": "aga 町田 おすすめ",
+          "cover": 13,
+          "rep_vol": 60,
+          "overlap_with_parent": 0
+        },
+        {
+          "value": "池袋",
+          "rep_kw": "agaクリニック おすすめ 池袋",
+          "cover": 9,
+          "rep_vol": 0,
+          "overlap_with_parent": 0
+        },
+        {
+          "value": "上野",
+          "rep_kw": "agaクリニック 上野 おすすめ",
+          "cover": 8,
+          "rep_vol": 0,
+          "overlap_with_parent": 0
+        },
+        {
+          "value": "秋葉原",
+          "rep_kw": "aga治療 おすすめ 秋葉原",
+          "cover": 8,
+          "rep_vol": 0,
+          "overlap_with_parent": 0
+        },
+        {
+          "value": "吉祥寺",
+          "rep_kw": "aga 吉祥寺 おすすめ",
+          "cover": 7,
+          "rep_vol": 30,
+          "overlap_with_parent": 0
+        },
+        {
+          "value": "銀座",
+          "rep_kw": "aga おすすめ 銀座",
+          "cover": 7,
+          "rep_vol": 0,
+          "overlap_with_parent": 0
+        },
+        {
+          "value": "八王子",
+          "rep_kw": "八王子 aga おすすめ",
+          "cover": 7,
+          "rep_vol": 0,
+          "overlap_with_parent": 0
+        },
+        {
+          "value": "青山",
+          "rep_kw": "aga 青山 おすすめ",
+          "cover": 6,
+          "rep_vol": 0,
+          "overlap_with_parent": 0
+        },
+        {
+          "value": "東京駅",
+          "rep_kw": "東京駅 aga クリニック",
+          "cover": 6,
+          "rep_vol": 0,
+          "overlap_with_parent": 2
+        },
+        {
+          "value": "新宿",
+          "rep_kw": "新宿agaクリニック 新宿区 東京都",
+          "cover": 5,
+          "rep_vol": 0,
+          "overlap_with_parent": 0
+        },
+        {
+          "value": "東京国際クルーズターミナル",
+          "rep_kw": "agaクリニック 東京国際クルーズターミナル",
+          "cover": 4,
+          "rep_vol": 0,
+          "overlap_with_parent": 1
+        },
+        {
+          "value": "田町",
+          "rep_kw": "agaクリニック おすすめ 田町",
+          "cover": 2,
+          "rep_vol": 0,
+          "overlap_with_parent": 0
+        },
+        {
+          "value": "東京新宿",
+          "rep_kw": "agaクリニック東京 新宿院",
+          "cover": 2,
+          "rep_vol": 20,
+          "overlap_with_parent": 0
+        },
+        {
+          "value": "中目黒",
+          "rep_kw": "中目黒 agaクリニック おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": 2
+        },
+        {
+          "value": "浅草",
+          "rep_kw": "浅草 agaクリニック おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": 1
+        },
+        {
+          "value": "神田",
+          "rep_kw": "aga 神田 おすすめ",
+          "cover": 1,
+          "rep_vol": 20,
+          "overlap_with_parent": 0
+        },
+        {
+          "value": "代官山",
+          "rep_kw": "代官山 agaクリニック おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": 2
+        },
+        {
+          "value": "北千住",
+          "rep_kw": "agaクリニック 北千住 おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": 0
+        },
+        {
+          "value": "六本木",
+          "rep_kw": "aga 六本木 おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": 0
+        },
+        {
+          "value": "三鷹",
+          "rep_kw": "aga 三鷹 おすすめ",
+          "cover": 1,
+          "rep_vol": 20,
+          "overlap_with_parent": 0
+        }
+      ]
+    },
+    {
+      "parent": "大阪",
+      "pages": [
+        {
+          "value": "大阪",
+          "rep_kw": "agaクリニック おすすめ 大阪",
+          "cover": 18,
+          "rep_vol": 0,
+          "overlap_with_parent": null
+        },
+        {
+          "value": "梅田",
+          "rep_kw": "aga 治療 おすすめ 梅田",
+          "cover": 13,
+          "rep_vol": 0,
+          "overlap_with_parent": 6
+        },
+        {
+          "value": "難波",
+          "rep_kw": "agaクリニック 難波 おすすめ",
+          "cover": 2,
+          "rep_vol": 0,
+          "overlap_with_parent": 2
+        },
+        {
+          "value": "茶屋町",
+          "rep_kw": "茶屋町 agaクリニック おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": 6
+        },
+        {
+          "value": "高槻",
+          "rep_kw": "agaクリニック 高槻 おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": 0
+        },
+        {
+          "value": "西梅田",
+          "rep_kw": "agaクリニック 西梅田 おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": 3
+        },
+        {
+          "value": "大阪梅田",
+          "rep_kw": "agaクリニック 大阪梅田 おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": 4
+        },
+        {
+          "value": "守口市",
+          "rep_kw": "守口市 agaクリニック おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": 0
+        }
+      ]
+    },
+    {
+      "parent": "広島",
+      "pages": [
+        {
+          "value": "広島",
+          "rep_kw": "広島 aga おすすめ",
+          "cover": 15,
+          "rep_vol": 20,
+          "overlap_with_parent": null
+        },
+        {
+          "value": "福山",
+          "rep_kw": "aga治療 おすすめ 福山",
+          "cover": 3,
+          "rep_vol": 0,
+          "overlap_with_parent": 0
+        },
+        {
+          "value": "紙屋町",
+          "rep_kw": "紙屋町 agaクリニック おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": 4
+        }
+      ]
+    },
+    {
+      "parent": "福岡",
+      "pages": [
+        {
+          "value": "福岡",
+          "rep_kw": "福岡 aga治療 おすすめ",
+          "cover": 15,
+          "rep_vol": 10,
+          "overlap_with_parent": null
+        },
+        {
+          "value": "天神",
+          "rep_kw": "aga 天神 おすすめ",
+          "cover": 3,
+          "rep_vol": 30,
+          "overlap_with_parent": 7
+        }
+      ]
+    },
+    {
+      "parent": "長崎",
+      "pages": [
+        {
+          "value": "長崎",
+          "rep_kw": "長崎 aga おすすめ",
+          "cover": 12,
+          "rep_vol": 0,
+          "overlap_with_parent": null
+        },
+        {
+          "value": "諫早",
+          "rep_kw": "諫早 agaクリニック おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": 1
+        }
+      ]
+    },
+    {
+      "parent": "千葉",
+      "pages": [
+        {
+          "value": "千葉",
+          "rep_kw": "aga治療 おすすめ 千葉",
+          "cover": 11,
+          "rep_vol": 0,
+          "overlap_with_parent": null
+        },
+        {
+          "value": "船橋",
+          "rep_kw": "aga治療 おすすめ 船橋",
+          "cover": 6,
+          "rep_vol": 0,
+          "overlap_with_parent": 0
+        },
+        {
+          "value": "新八柱",
+          "rep_kw": "新八柱 agaクリニック おすすめ",
+          "cover": 2,
+          "rep_vol": 0,
+          "overlap_with_parent": 0
+        }
+      ]
+    },
+    {
+      "parent": "名古屋",
+      "pages": [
+        {
+          "value": "名古屋",
+          "rep_kw": "aga 治療 名古屋 おすすめ",
+          "cover": 11,
+          "rep_vol": 0,
+          "overlap_with_parent": null
+        },
+        {
+          "value": "名駅周辺",
+          "rep_kw": "名駅周辺 agaクリニック おすすめ",
+          "cover": 2,
+          "rep_vol": 0,
+          "overlap_with_parent": 6
+        },
+        {
+          "value": "栄",
+          "rep_kw": "agaクリニック 栄 おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": 4
+        }
+      ]
+    },
+    {
+      "parent": "さいたま",
+      "pages": [
+        {
+          "value": "大宮",
+          "rep_kw": "aga治療 大宮 おすすめ",
+          "cover": 10,
+          "rep_vol": 0,
+          "overlap_with_parent": null
+        },
+        {
+          "value": "浦和",
+          "rep_kw": "aga 浦和 おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": null
+        }
+      ]
+    },
+    {
+      "parent": "岩手",
+      "pages": [
+        {
+          "value": "岩手",
+          "rep_kw": "岩手 aga おすすめ",
+          "cover": 9,
+          "rep_vol": 0,
+          "overlap_with_parent": null
+        },
+        {
+          "value": "平泉",
+          "rep_kw": "平泉 agaクリニック おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": 4
+        },
+        {
+          "value": "北上",
+          "rep_kw": "北上 agaクリニック おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": 2
+        }
+      ]
+    },
+    {
+      "parent": "秋田",
+      "pages": [
+        {
+          "value": "秋田",
+          "rep_kw": "aga治療 秋田 おすすめ",
+          "cover": 6,
+          "rep_vol": 20,
+          "overlap_with_parent": null
+        },
+        {
+          "value": "大館",
+          "rep_kw": "大館 agaクリニック おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": 1
+        }
+      ]
+    },
+    {
+      "parent": "北海道",
+      "pages": [
+        {
+          "value": "滝川",
+          "rep_kw": "滝川 agaクリニック おすすめ",
+          "cover": 6,
+          "rep_vol": 0,
+          "overlap_with_parent": null
+        },
+        {
+          "value": "北見",
+          "rep_kw": "北見 agaクリニック おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": null
+        },
+        {
+          "value": "恵庭",
+          "rep_kw": "恵庭 agaクリニック おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": null
+        },
+        {
+          "value": "小樽市",
+          "rep_kw": "小樽市 agaクリニック おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": null
+        }
+      ]
+    },
+    {
+      "parent": "埼玉",
+      "pages": [
+        {
+          "value": "埼玉",
+          "rep_kw": "aga 治療 埼玉 おすすめ",
+          "cover": 4,
+          "rep_vol": 0,
+          "overlap_with_parent": null
+        },
+        {
+          "value": "草加",
+          "rep_kw": "agaクリニック 草加 おすすめ",
+          "cover": 2,
+          "rep_vol": 0,
+          "overlap_with_parent": 0
+        },
+        {
+          "value": "川口",
+          "rep_kw": "agaクリニック 川口 おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": 3
+        },
+        {
+          "value": "越谷",
+          "rep_kw": "aga 越谷 おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": 0
+        }
+      ]
+    },
+    {
+      "parent": "静岡",
+      "pages": [
+        {
+          "value": "静岡",
+          "rep_kw": "aga おすすめ 静岡",
+          "cover": 4,
+          "rep_vol": 0,
+          "overlap_with_parent": null
+        },
+        {
+          "value": "浜松",
+          "rep_kw": "aga おすすめ 浜松",
+          "cover": 2,
+          "rep_vol": 10,
+          "overlap_with_parent": 0
+        },
+        {
+          "value": "清水",
+          "rep_kw": "清水 agaクリニック おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": 2
+        }
+      ]
+    },
+    {
+      "parent": "神奈川",
+      "pages": [
+        {
+          "value": "神奈川",
+          "rep_kw": "aga 神奈川 おすすめ",
+          "cover": 4,
+          "rep_vol": 50,
+          "overlap_with_parent": null
+        },
+        {
+          "value": "淵野辺",
+          "rep_kw": "淵野辺 agaクリニック おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": 0
+        },
+        {
+          "value": "藤沢",
+          "rep_kw": "agaクリニック おすすめ 藤沢",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": 0
+        },
+        {
+          "value": "横須賀",
+          "rep_kw": "agaクリニック 横須賀 おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": 0
+        }
+      ]
+    },
+    {
+      "parent": "兵庫",
+      "pages": [
+        {
+          "value": "西宮",
+          "rep_kw": "西宮 agaクリニック おすすめ",
+          "cover": 3,
+          "rep_vol": 0,
+          "overlap_with_parent": 0
+        },
+        {
+          "value": "姫路",
+          "rep_kw": "姫路 おすすめ agaクリニック",
+          "cover": 3,
+          "rep_vol": 10,
+          "overlap_with_parent": 1
+        },
+        {
+          "value": "明石",
+          "rep_kw": "aga 明石 おすすめ",
+          "cover": 1,
+          "rep_vol": 30,
+          "overlap_with_parent": 0
+        },
+        {
+          "value": "兵庫",
+          "rep_kw": "兵庫 aga おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": null
+        }
+      ]
+    },
+    {
+      "parent": "茨城",
+      "pages": [
+        {
+          "value": "つくば",
+          "rep_kw": "つくば agaクリニック おすすめ",
+          "cover": 3,
+          "rep_vol": 0,
+          "overlap_with_parent": 2
+        },
+        {
+          "value": "茨城",
+          "rep_kw": "茨城 agaクリニック おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": null
+        }
+      ]
+    },
+    {
+      "parent": "群馬",
+      "pages": [
+        {
+          "value": "群馬",
+          "rep_kw": "aga 群馬 おすすめ",
+          "cover": 2,
+          "rep_vol": 50,
+          "overlap_with_parent": null
+        },
+        {
+          "value": "伊勢崎",
+          "rep_kw": "aga 伊勢崎 おすすめ",
+          "cover": 1,
+          "rep_vol": 20,
+          "overlap_with_parent": 1
+        }
+      ]
+    },
+    {
+      "parent": "奈良",
+      "pages": [
+        {
+          "value": "橿原",
+          "rep_kw": "aga 橿原 おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": 3
+        },
+        {
+          "value": "奈良",
+          "rep_kw": "奈良 aga治療 おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": null
+        }
+      ]
+    },
+    {
+      "parent": "三重",
+      "pages": [
+        {
+          "value": "松阪市",
+          "rep_kw": "aga 松阪市 おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": 3
+        },
+        {
+          "value": "三重",
+          "rep_kw": "三重 aga治療 おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": null
+        }
+      ]
+    },
+    {
+      "parent": "愛知",
+      "pages": [
+        {
+          "value": "愛知",
+          "rep_kw": "agaクリニック 愛知 おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": null
+        },
+        {
+          "value": "豊田",
+          "rep_kw": "aga 豊田 おすすめ",
+          "cover": 1,
+          "rep_vol": 30,
+          "overlap_with_parent": 1
+        },
+        {
+          "value": "一宮",
+          "rep_kw": "aga 一宮 おすすめ",
+          "cover": 1,
+          "rep_vol": 20,
+          "overlap_with_parent": 0
+        },
+        {
+          "value": "春日井",
+          "rep_kw": "aga 春日井 おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": 0
+        },
+        {
+          "value": "豊橋",
+          "rep_kw": "agaクリニック 豊橋 おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": 0
+        }
+      ]
+    },
+    {
+      "parent": "福島",
+      "pages": [
+        {
+          "value": "福島",
+          "rep_kw": "福島 agaクリニック おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": null
+        },
+        {
+          "value": "郡山",
+          "rep_kw": "郡山 aga クリニック",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": 1
+        }
+      ]
+    },
+    {
+      "parent": "愛媛",
+      "pages": [
+        {
+          "value": "西条",
+          "rep_kw": "aga 西条 おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": 0
+        },
+        {
+          "value": "愛媛",
+          "rep_kw": "愛媛 aga治療 おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": null
+        }
+      ]
+    },
+    {
+      "parent": "石川",
+      "pages": [
+        {
+          "value": "白山",
+          "rep_kw": "aga 白山 おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": 0
+        },
+        {
+          "value": "石川",
+          "rep_kw": "aga 石川 おすすめ",
+          "cover": 1,
+          "rep_vol": 40,
+          "overlap_with_parent": null
+        }
+      ]
+    },
+    {
+      "parent": "札幌",
+      "pages": [
+        {
+          "value": "札幌市北区",
+          "rep_kw": "札幌市北区 agaクリニック おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": 0
+        },
+        {
+          "value": "札幌",
+          "rep_kw": "札幌 aga治療 おすすめ",
+          "cover": 1,
+          "rep_vol": 10,
+          "overlap_with_parent": null
+        },
+        {
+          "value": "札幌市南区",
+          "rep_kw": "札幌市南区 agaクリニック おすすめ",
+          "cover": 1,
+          "rep_vol": 0,
+          "overlap_with_parent": 0
+        }
+      ]
+    }
+  ],
+  "noisePages": [
+    {
+      "page_id": "p_0099",
+      "bucket": "informational:長期・一生",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "AGA治療は一生続きますか？"
+    },
+    {
+      "page_id": "p_0101",
+      "bucket": "informational:副作用は治る",
+      "cover": 1,
+      "rep_vol": null,
+      "rep_kw": "aga治療 副作用 治る"
+    },
+    {
+      "page_id": "p_0103",
+      "bucket": "informational:内服薬以外",
+      "cover": 1,
+      "rep_vol": null,
+      "rep_kw": "aga 内服薬以外"
+    },
+    {
+      "page_id": "p_0104",
+      "bucket": "informational:服用方法・使い方",
+      "cover": 1,
+      "rep_vol": null,
+      "rep_kw": "aga 外用薬 使い方"
+    },
+    {
+      "page_id": "p_0105",
+      "bucket": "cost:保険適用外",
+      "cover": 1,
+      "rep_vol": null,
+      "rep_kw": "aga治療 保険適用外"
+    },
+    {
+      "page_id": "p_0107",
+      "bucket": "location:淵野辺",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "淵野辺 agaクリニック おすすめ"
+    },
+    {
+      "page_id": "p_0108",
+      "bucket": "location:橿原",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "aga 橿原 おすすめ"
+    },
+    {
+      "page_id": "p_0109",
+      "bucket": "location:仙台駅周辺",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "仙台駅周辺 agaクリニック おすすめ"
+    },
+    {
+      "page_id": "p_0110",
+      "bucket": "location:大館",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "大館 agaクリニック おすすめ"
+    },
+    {
+      "page_id": "p_0111",
+      "bucket": "location:松阪市",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "aga 松阪市 おすすめ"
+    },
+    {
+      "page_id": "p_0112",
+      "bucket": "location:中目黒",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "中目黒 agaクリニック おすすめ"
+    },
+    {
+      "page_id": "p_0113",
+      "bucket": "location:茶屋町",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "茶屋町 agaクリニック おすすめ"
+    },
+    {
+      "page_id": "p_0114",
+      "bucket": "location:浅草",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "浅草 agaクリニック おすすめ"
+    },
+    {
+      "page_id": "p_0115",
+      "bucket": "location:諫早",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "諫早 agaクリニック おすすめ"
+    },
+    {
+      "page_id": "p_0116",
+      "bucket": "location:川口",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "agaクリニック 川口 おすすめ"
+    },
+    {
+      "page_id": "p_0117",
+      "bucket": "location:栃木",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "aga治療 栃木 おすすめ"
+    },
+    {
+      "page_id": "p_0119",
+      "bucket": "location:北見",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "北見 agaクリニック おすすめ"
+    },
+    {
+      "page_id": "p_0121",
+      "bucket": "location:相模原",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "agaクリニック 相模原 おすすめ"
+    },
+    {
+      "page_id": "p_0122",
+      "bucket": "location:愛知",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "agaクリニック 愛知 おすすめ"
+    },
+    {
+      "page_id": "p_0123",
+      "bucket": "location:京都",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "aga治療 おすすめ 京都"
+    },
+    {
+      "page_id": "p_0124",
+      "bucket": "location:高槻",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "agaクリニック 高槻 おすすめ"
+    },
+    {
+      "page_id": "p_0125",
+      "bucket": "location:東京都",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "東京都 aga治療 おすすめ"
+    },
+    {
+      "page_id": "p_0126",
+      "bucket": "location:代官山",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "代官山 agaクリニック おすすめ"
+    },
+    {
+      "page_id": "p_0127",
+      "bucket": "location:福島",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "福島 agaクリニック おすすめ"
+    },
+    {
+      "page_id": "p_0129",
+      "bucket": "location:平泉",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "平泉 agaクリニック おすすめ"
+    },
+    {
+      "page_id": "p_0130",
+      "bucket": "cost:無料診断・相談",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "agaクリニック 無料診断 おすすめ"
+    },
+    {
+      "page_id": "p_0131",
+      "bucket": "location:北千住",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "agaクリニック 北千住 おすすめ"
+    },
+    {
+      "page_id": "p_0132",
+      "bucket": "location:長野",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "agaクリニック おすすめ 長野"
+    },
+    {
+      "page_id": "p_0133",
+      "bucket": "location:茨城",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "茨城 agaクリニック おすすめ"
+    },
+    {
+      "page_id": "p_0134",
+      "bucket": "location:岐阜",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "agaクリニック おすすめ 岐阜"
+    },
+    {
+      "page_id": "p_0135",
+      "bucket": "location:北上",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "北上 agaクリニック おすすめ"
+    },
+    {
+      "page_id": "p_0136",
+      "bucket": "location:西条",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "aga 西条 おすすめ"
+    },
+    {
+      "page_id": "p_0138",
+      "bucket": "location:六本木",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "aga 六本木 おすすめ"
+    },
+    {
+      "page_id": "p_0139",
+      "bucket": "location:米子",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "agaクリニック 米子 おすすめ"
+    },
+    {
+      "page_id": "p_0140",
+      "bucket": "location:藤沢",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "agaクリニック おすすめ 藤沢"
+    },
+    {
+      "page_id": "p_0141",
+      "bucket": "location:栄",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "agaクリニック 栄 おすすめ"
+    },
+    {
+      "page_id": "p_0142",
+      "bucket": "location:福岡市",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "福岡市 aga おすすめ"
+    },
+    {
+      "page_id": "p_0145",
+      "bucket": "location:白山",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "aga 白山 おすすめ"
+    },
+    {
+      "page_id": "p_0146",
+      "bucket": "location:恵庭",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "恵庭 agaクリニック おすすめ"
+    },
+    {
+      "page_id": "p_0147",
+      "bucket": "location:愛媛",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "愛媛 aga治療 おすすめ"
+    },
+    {
+      "page_id": "p_0148",
+      "bucket": "location:横須賀",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "agaクリニック 横須賀 おすすめ"
+    },
+    {
+      "page_id": "p_0149",
+      "bucket": "location:紙屋町",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "紙屋町 agaクリニック おすすめ"
+    },
+    {
+      "page_id": "p_0150",
+      "bucket": "location:奈良",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "奈良 aga治療 おすすめ"
+    },
+    {
+      "page_id": "p_0151",
+      "bucket": "location:兵庫",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "兵庫 aga おすすめ"
+    },
+    {
+      "page_id": "p_0152",
+      "bucket": "location:札幌市北区",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "札幌市北区 agaクリニック おすすめ"
+    },
+    {
+      "page_id": "p_0153",
+      "bucket": "location:清水",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "清水 agaクリニック おすすめ"
+    },
+    {
+      "page_id": "p_0154",
+      "bucket": "location:春日井",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "aga 春日井 おすすめ"
+    },
+    {
+      "page_id": "p_0155",
+      "bucket": "location:西梅田",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "agaクリニック 西梅田 おすすめ"
+    },
+    {
+      "page_id": "p_0156",
+      "bucket": "location:大阪梅田",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "agaクリニック 大阪梅田 おすすめ"
+    },
+    {
+      "page_id": "p_0158",
+      "bucket": "location:豊橋",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "agaクリニック 豊橋 おすすめ"
+    },
+    {
+      "page_id": "p_0159",
+      "bucket": "location:守口市",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "守口市 agaクリニック おすすめ"
+    },
+    {
+      "page_id": "p_0160",
+      "bucket": "location:越谷",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "aga 越谷 おすすめ"
+    },
+    {
+      "page_id": "p_0161",
+      "bucket": "location:札幌市南区",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "札幌市南区 agaクリニック おすすめ"
+    },
+    {
+      "page_id": "p_0163",
+      "bucket": "location:徳島",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "agaクリニック 徳島 おすすめ"
+    },
+    {
+      "page_id": "p_0164",
+      "bucket": "location:高知",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "agaクリニック おすすめ 高知"
+    },
+    {
+      "page_id": "p_0166",
+      "bucket": "location:浦和",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "aga 浦和 おすすめ"
+    },
+    {
+      "page_id": "p_0167",
+      "bucket": "location:三重",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "三重 aga治療 おすすめ"
+    },
+    {
+      "page_id": "p_0168",
+      "bucket": "location:小樽市",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "小樽市 agaクリニック おすすめ"
+    },
+    {
+      "page_id": "p_0171",
+      "bucket": "audience:40代",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "aga治療 おすすめ ４０代"
+    },
+    {
+      "page_id": "p_0173",
+      "bucket": "informational:生活習慣",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "aga 治療 運動"
+    },
+    {
+      "page_id": "p_0174",
+      "bucket": "location:郡山",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "郡山 aga クリニック"
+    },
+    {
+      "page_id": "p_0177",
+      "bucket": "location:都内",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "aga 治療 都内 おすすめ"
+    },
+    {
+      "page_id": "p_0178",
+      "bucket": "cost:無料",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "aga 初月無料"
+    },
+    {
+      "page_id": "p_0179",
+      "bucket": "location:宮城",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "宮城 aga おすすめ"
+    },
+    {
+      "page_id": "p_0183",
+      "bucket": "informational:髪質",
+      "cover": 1,
+      "rep_vol": 0,
+      "rep_kw": "aga 治療 髪質"
+    },
+    {
+      "page_id": "p_0077",
+      "bucket": "informational:副作用が少ない・ない",
+      "cover": 2,
+      "rep_vol": null,
+      "rep_kw": "aga治療 副作用 少ない"
+    },
+    {
+      "page_id": "p_0078",
+      "bucket": "informational:回数",
+      "cover": 2,
+      "rep_vol": null,
+      "rep_kw": "AGAメソセラピーは何回くらいするのですか？"
+    },
+    {
+      "page_id": "p_0079",
+      "bucket": "location:名駅周辺",
+      "cover": 2,
+      "rep_vol": 0,
+      "rep_kw": "名駅周辺 agaクリニック おすすめ"
+    },
+    {
+      "page_id": "p_0080",
+      "bucket": "location:新潟",
+      "cover": 2,
+      "rep_vol": 0,
+      "rep_kw": "新潟 aga おすすめ"
+    },
+    {
+      "page_id": "p_0081",
+      "bucket": "location:草加",
+      "cover": 2,
+      "rep_vol": 0,
+      "rep_kw": "agaクリニック 草加 おすすめ"
+    },
+    {
+      "page_id": "p_0082",
+      "bucket": "audience:20代",
+      "cover": 2,
+      "rep_vol": 0,
+      "rep_kw": "agaクリニック 20代 おすすめ"
+    },
+    {
+      "page_id": "p_0083",
+      "bucket": "location:難波",
+      "cover": 2,
+      "rep_vol": 0,
+      "rep_kw": "agaクリニック 難波 おすすめ"
+    },
+    {
+      "page_id": "p_0084",
+      "bucket": "location:新八柱",
+      "cover": 2,
+      "rep_vol": 0,
+      "rep_kw": "新八柱 agaクリニック おすすめ"
+    },
+    {
+      "page_id": "p_0085",
+      "bucket": "location:松山",
+      "cover": 2,
+      "rep_vol": 0,
+      "rep_kw": "aga治療院 松山 おすすめ"
+    },
+    {
+      "page_id": "p_0086",
+      "bucket": "location:岩出",
+      "cover": 2,
+      "rep_vol": 0,
+      "rep_kw": "岩出 agaクリニック おすすめ"
+    },
+    {
+      "page_id": "p_0088",
+      "bucket": "drug:内服薬",
+      "cover": 2,
+      "rep_vol": 0,
+      "rep_kw": "aga 内服薬 おすすめ"
+    },
+    {
+      "page_id": "p_0089",
+      "bucket": "location:田町",
+      "cover": 2,
+      "rep_vol": 0,
+      "rep_kw": "agaクリニック おすすめ 田町"
+    }
+  ],
+  "variantPairs": [
+    {
+      "a": "東京",
+      "b": "東京 新宿",
+      "reason": "substring"
+    },
+    {
+      "a": "東京",
+      "b": "東京駅",
+      "reason": "substring"
+    },
+    {
+      "a": "東京",
+      "b": "東京国際クルーズターミナル",
+      "reason": "substring"
+    },
+    {
+      "a": "東京",
+      "b": "東京新宿",
+      "reason": "substring"
+    },
+    {
+      "a": "東京",
+      "b": "東京都",
+      "reason": "substring"
+    },
+    {
+      "a": "大阪",
+      "b": "大阪梅田",
+      "reason": "substring"
+    },
+    {
+      "a": "岡山",
+      "b": "岡山市",
+      "reason": "substring"
+    },
+    {
+      "a": "福岡",
+      "b": "福岡市",
+      "reason": "substring"
+    },
+    {
+      "a": "東京 新宿",
+      "b": "新宿",
+      "reason": "substring"
+    },
+    {
+      "a": "東京 新宿",
+      "b": "東京新宿",
+      "reason": "space/case"
+    },
+    {
+      "a": "梅田",
+      "b": "西梅田",
+      "reason": "substring"
+    },
+    {
+      "a": "梅田",
+      "b": "大阪梅田",
+      "reason": "substring"
+    },
+    {
+      "a": "新宿",
+      "b": "東京新宿",
+      "reason": "substring"
+    },
+    {
+      "a": "京都",
+      "b": "東京都",
+      "reason": "substring"
+    },
+    {
+      "a": "札幌市北区",
+      "b": "札幌",
+      "reason": "substring"
+    },
+    {
+      "a": "札幌",
+      "b": "札幌市南区",
+      "reason": "substring"
+    }
+  ]
+}
