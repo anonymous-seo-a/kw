@@ -17,6 +17,8 @@ import { runNec } from '../necessity/nec.js';
 import { runPageMergeSerp } from '../cluster/page-merge-serp.js';
 import { runNoiseFilter } from '../cluster/noise-filter.js';
 import { runThemeDerive } from '../cluster/theme-derive.js';
+import { runRegionRollup } from '../cluster/region-rollup.js';
+import { runTaxonomyMap } from '../cluster/taxonomy-map.js';
 import { applyComplianceFloor } from '../necessity/compliance-floor.js';
 import { runCoverage } from './setcover.js';
 
@@ -33,8 +35,10 @@ export interface Phase4Result {
   coverage: Awaited<ReturnType<typeof runCoverage>>;
   pageMergeSerp: Awaited<ReturnType<typeof runPageMergeSerp>>;
   noiseFilter: Awaited<ReturnType<typeof runNoiseFilter>>;
+  regionRollup: Awaited<ReturnType<typeof runRegionRollup>>;
   coverage2: Awaited<ReturnType<typeof runCoverage>>;
-  themeDerive: Awaited<ReturnType<typeof runThemeDerive>>;
+  taxonomyMap: Awaited<ReturnType<typeof runTaxonomyMap>>;
+  themeDerive: Awaited<ReturnType<typeof runThemeDerive>> | { skipped: true };
 }
 
 export interface Phase4Options {
@@ -86,10 +90,14 @@ export async function runPhase4(runId: string, opts: Phase4Options = {}): Promis
   const pageMergeSerp = await runPageMergeSerp(runId);
   // 修正C-2 (spec-01): noise location pages を nec_decisions='noise_excluded' に
   const noiseFilter = await runNoiseFilter(runId);
-  // 2nd pass coverage (merge + noise filter 後の最終 cov_pages)
+  // spec-02 修正C: 地域 sub薄い都市 → 親 roll-up
+  const regionRollup = await runRegionRollup(runId);
+  // 2nd pass coverage (merge + noise filter + region rollup 後の最終 cov_pages)
   const coverage2 = await runCoverage(runId);
-  // 修正A (spec-01): theme (軸) 導出 — Claude命名 8-12 themes
-  const themeDerive = await runThemeDerive(runId);
+  // spec-02 修正B: top-down 12軸 taxonomy 割当 (旧 k-means theme-derive 置換)
+  const taxonomyMap = await runTaxonomyMap(runId);
+  // 旧 theme-derive (k-means + Claude命名) は spec-02で taxonomyMap に置換。skip。
+  const themeDerive = { skipped: true } as const;
 
   setRunStatus(runId, 'phase4_done');
   audit({
@@ -100,7 +108,7 @@ export async function runPhase4(runId: string, opts: Phase4Options = {}): Promis
     after: {
       axes, axesNormalize, locationNormalize, intentFilters, locationHierarchy, l3,
       l3Metrics, nec, compliance, coverage,
-      pageMergeSerp, noiseFilter, coverage2, themeDerive,
+      pageMergeSerp, noiseFilter, regionRollup, coverage2, taxonomyMap, themeDerive,
     },
   });
 
@@ -108,13 +116,13 @@ export async function runPhase4(runId: string, opts: Phase4Options = {}): Promis
     {
       runId, axes, axesNormalize, locationNormalize, intentFilters, locationHierarchy, l3,
       l3Metrics, nec, compliance, coverage,
-      pageMergeSerp, noiseFilter, coverage2, themeDerive,
+      pageMergeSerp, noiseFilter, regionRollup, coverage2, taxonomyMap, themeDerive,
     },
     '[Phase4] complete',
   );
   return {
     axes, axesNormalize, locationNormalize, intentFilters, locationHierarchy, l3,
     l3Metrics, nec, compliance, coverage,
-    pageMergeSerp, noiseFilter, coverage2, themeDerive,
+    pageMergeSerp, noiseFilter, regionRollup, coverage2, taxonomyMap, themeDerive,
   };
 }
